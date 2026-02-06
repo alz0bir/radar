@@ -1,0 +1,2739 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز إصلاح الرادارات البحرية | Marine Radar Repair Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #003366;
+            --secondary-blue: #0066cc;
+            --accent-orange: #ff6600;
+            --light-bg: #f5f8fa;
+            --dark-text: #1a1a1a;
+            --gray-border: #ddd;
+            --success-green: #28a745;
+            --warning-red: #dc3545;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 3em;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .contact-info {
+            margin-top: 15px;
+            font-size: 0.95em;
+            opacity: 0.95;
+        }
+
+        .contact-info a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        <!-- Admin Button -->
+        .admin-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            font-weight: bold;
+            font-size: 1.05em;
+        }
+
+        .admin-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Navigation */
+        .nav-bar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 20px;
+            padding: 15px 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: var(--light-bg);
+            border: 2px solid var(--gray-border);
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--secondary-blue);
+            color: white;
+            border-color: var(--secondary-blue);
+            transform: translateY(-2px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border: 2px solid var(--gray-border);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 10px rgba(0, 102, 204, 0.2);
+        }
+
+        .search-btn {
+            background: var(--accent-orange);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #ff8533;
+            transform: scale(1.05);
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 12px 20px;
+            border: 2px solid var(--gray-border);
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-select:hover {
+            border-color: var(--secondary-blue);
+        }
+
+        .clear-filters-btn {
+            background: var(--warning-red);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .clear-filters-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+
+        .active-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .filter-tag {
+            background: var(--secondary-blue);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-tag .remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .filter-tag .remove:hover {
+            transform: scale(1.2);
+        }
+
+        /* Stats Dashboard */
+        .stats-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, white 0%, var(--light-bg) 100%);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s;
+            border-right: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(0, 102, 204, 0.05) 100%);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            border-right-color: var(--secondary-blue);
+        }
+
+        .stat-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--secondary-blue);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        /* Fault Cards Grid */
+        .faults-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .fault-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .fault-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--accent-orange);
+            transform: scaleY(0);
+            transition: transform 0.3s;
+        }
+
+        .fault-card:hover::after {
+            transform: scaleY(1);
+        }
+
+        .fault-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .fault-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        .fault-header::after {
+            content: '👁️';
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            font-size: 1.5em;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .fault-card:hover .fault-header::after {
+            opacity: 0.5;
+            bottom: 15px;
+        }
+
+        .fault-code {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .fault-title {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .fault-body {
+            padding: 20px;
+        }
+
+        .fault-info {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: var(--secondary-blue);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-content {
+            color: #555;
+            padding-right: 25px;
+            line-height: 1.6;
+        }
+
+        .severity-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .severity-critical {
+            background: #dc3545;
+            color: white;
+        }
+
+        .severity-high {
+            background: #ff6600;
+            color: white;
+        }
+
+        .severity-medium {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .severity-low {
+            background: #28a745;
+            color: white;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 2em;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .detail-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--light-bg);
+            border-radius: 10px;
+            border-right: 4px solid var(--secondary-blue);
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
+            position: relative;
+            padding-right: 50px;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--secondary-blue);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Radar Types */
+        .radar-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .radar-type-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .radar-type-card:hover {
+            border-color: var(--secondary-blue);
+            transform: scale(1.05);
+        }
+
+        .radar-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .radar-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+
+        .radar-model {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* Login Form */
+        .login-container {
+            max-width: 450px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .login-title {
+            text-align: center;
+            color: var(--primary-blue);
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--dark-text);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--gray-border);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 10px rgba(0, 102, 204, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--secondary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: var(--warning-red);
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .admin-title {
+            font-size: 2em;
+            color: var(--primary-blue);
+        }
+
+        .logout-btn {
+            background: var(--warning-red);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+
+        .add-fault-btn {
+            background: linear-gradient(135deg, var(--success-green) 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .add-fault-btn:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ea777 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .add-fault-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Admin Table */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid var(--gray-border);
+        }
+
+        .admin-table th {
+            background: var(--primary-blue);
+            color: white;
+            font-weight: bold;
+        }
+
+        .admin-table tr:hover {
+            background: var(--light-bg);
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .edit-btn {
+            background: var(--secondary-blue);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: var(--primary-blue);
+        }
+
+        .delete-btn {
+            background: var(--warning-red);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        /* Form Modal */
+        .form-modal {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .form-row {
+            margin-bottom: 20px;
+        }
+
+        .form-row label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+
+        .form-row input,
+        .form-row select,
+        .form-row textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--gray-border);
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-row input:focus,
+        .form-row select:focus,
+        .form-row textarea:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 10px rgba(0, 102, 204, 0.1);
+        }
+
+        .form-row textarea {
+            min-height: 100px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .form-row small {
+            font-size: 0.85em;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .save-btn {
+            flex: 1;
+            padding: 15px;
+            background: var(--success-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .save-btn:hover {
+            background: #218838;
+        }
+
+        .cancel-btn {
+            flex: 1;
+            padding: 15px;
+            background: var(--gray-border);
+            color: var(--dark-text);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cancel-btn:hover {
+            background: #bbb;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .content-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .content-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .content-section ul {
+            margin-right: 30px;
+            margin-bottom: 15px;
+        }
+
+        .content-section li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        /* Guides Section */
+        .guide-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border-right: 4px solid var(--accent-orange);
+            transition: all 0.3s;
+        }
+
+        .guide-card:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .guide-title {
+            font-size: 1.5em;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary-blue);
+            color: white;
+            padding: 40px 20px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 15px;
+            color: var(--accent-orange);
+            font-size: 1.3em;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: 100%;
+            }
+            
+            .faults-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-table {
+                font-size: 0.9em;
+            }
+
+            .admin-table th,
+            .admin-table td {
+                padding: 10px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2em;
+            color: var(--secondary-blue);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .no-results-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .no-results-text {
+            font-size: 1.3em;
+            color: #666;
+        }
+
+        /* User Management Styles */
+        .user-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+
+        .user-role {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .role-admin {
+            background: #ff4444;
+            color: white;
+        }
+
+        .role-supervisor {
+            background: #ff9800;
+            color: white;
+        }
+
+        .role-member {
+            background: #4caf50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="login-container">
+            <h2 class="login-title">🔐 تسجيل دخول الأدمن</h2>
+            <div>
+                <div class="form-group">
+                    <label>اسم المستخدم</label>
+                    <input type="text" id="username" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور</label>
+                    <input type="password" id="password" autocomplete="current-password">
+                </div>
+                
+                <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+                    <small style="color: #1976d2;">
+                        <strong>💡 للتجربة:</strong><br>
+                        اسم المستخدم: <code style="background: white; padding: 2px 8px; border-radius: 4px;">usr</code><br>
+                        كلمة المرور: <code style="background: white; padding: 2px 8px; border-radius: 4px;">123</code>
+                    </small>
+                </div>
+                
+                <button type="button" class="login-btn" onclick="attemptLogin()">دخول</button>
+                <div class="error-message" id="loginError">❌ اسم المستخدم أو كلمة المرور غير صحيحة</div>
+            </div>
+            
+            <button onclick="closeModal('loginModal')" style="margin-top: 15px; background: #ddd; color: #333; width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                إلغاء
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Website -->
+    <div id="mainSite">
+        <!-- Header -->
+        <div class="header">
+            <div class="admin-btn" onclick="showLogin()">
+                👤 تسجيل دخول الأدمن
+            </div>
+            
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">🛥️📡</div>
+                    <div>
+                        <h1>مركز إصلاح الرادارات البحرية</h1>
+                        <p class="subtitle">دليلك الشامل لصيانة وإصلاح رادارات Sperry Marine</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-bar">
+            <div class="nav-content">
+                <button class="nav-btn active" onclick="showSection('home')">🏠 الرئيسية</button>
+                <button class="nav-btn" onclick="showSection('faults')">⚠️ الأعطال الشائعة</button>
+                <button class="nav-btn" onclick="showSection('radar-types')">📡 أنواع الرادارات</button>
+                <button class="nav-btn" onclick="showSection('guides')">📚 أدلة الصيانة</button>
+                <button class="nav-btn" onclick="showSection('about')">ℹ️ عن المركز</button>
+            </div>
+        </div>
+
+        <!-- Main Container -->
+        <div class="container">
+            <!-- Home Section -->
+            <div id="homeSection">
+                <!-- Stats Dashboard -->
+                <div class="stats-dashboard">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number" id="statFaultsNum">0</div>
+                        <div class="stat-label">عطل مسجل</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📡</div>
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">أنواع رادارات</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔧</div>
+                        <div class="stat-number" id="statSolutionsNum">0</div>
+                        <div class="stat-label">حل عملي</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-number">1.2k</div>
+                        <div class="stat-label">مستخدم</div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h2>🏠 مرحباً بك في مركز إصلاح الرادارات البحرية</h2>
+                    <p style="font-size: 1.1em; line-height: 1.8;">
+                        منصتك المتخصصة في صيانة وإصلاح رادارات Sperry Marine. نوفر لك قاعدة بيانات شاملة 
+                        للأعطال الشائعة مع حلولها العملية، أدلة صيانة تفصيلية، ومعلومات تقنية محدثة.
+                    </p>
+                </div>
+
+                <h2 style="margin-bottom: 20px; color: var(--primary-blue);">⚡ الأعطال الأخيرة المضافة</h2>
+                <div class="faults-grid" id="faultsGrid"></div>
+            </div>
+
+            <!-- Faults Section -->
+            <div id="faultsSection" class="hidden">
+                <!-- Search Section -->
+                <div class="search-section">
+                    <h2 style="margin-bottom: 20px; color: var(--primary-blue);">🔍 البحث عن الأعطال</h2>
+                    <div class="search-box">
+                        <input type="text" class="search-input" id="searchInput" placeholder="ابحث عن العطل بالاسم أو الكود... مثال: ERR-001 أو No Display">
+                        <button class="search-btn" onclick="searchFaults()">بحث</button>
+                    </div>
+                    <div class="filters">
+                        <select class="filter-select" id="radarFilter" onchange="applyFilters()">
+                            <option value="all">جميع الرادارات</option>
+                            <option value="visionmaster">VisionMaster FT</option>
+                            <option value="fusion">Fusion</option>
+                            <option value="visionmaster-net">VisionMaster Net</option>
+                        </select>
+                        <select class="filter-select" id="severityFilter" onchange="applyFilters()">
+                            <option value="all">جميع الأولويات</option>
+                            <option value="critical">حرجة</option>
+                            <option value="high">عالية</option>
+                            <option value="medium">متوسطة</option>
+                            <option value="low">منخفضة</option>
+                        </select>
+                        <select class="filter-select" id="categoryFilter" onchange="applyFilters()">
+                            <option value="all">جميع الفئات</option>
+                            <option value="display">العرض</option>
+                            <option value="power">الطاقة</option>
+                            <option value="antenna">الهوائي</option>
+                            <option value="software">البرمجيات</option>
+                            <option value="network">الشبكة</option>
+                        </select>
+                        <select class="filter-select" id="sortFilter" onchange="applyFilters()">
+                            <option value="newest">الأحدث أولاً</option>
+                            <option value="oldest">الأقدم أولاً</option>
+                            <option value="severity">حسب الأولوية</option>
+                            <option value="code">حسب الكود</option>
+                        </select>
+                        <button class="clear-filters-btn" onclick="clearFilters()" style="display: none;" id="clearFiltersBtn">🔄 مسح الفلاتر</button>
+                    </div>
+                    <div class="active-filters" id="activeFilters"></div>
+                </div>
+
+                <h2 style="margin-bottom: 20px; color: var(--primary-blue);">⚠️ جميع الأعطال</h2>
+                <div class="faults-grid" id="allFaultsGrid"></div>
+            </div>
+
+            <!-- Radar Types Section -->
+            <div id="radarTypesSection" class="hidden">
+                <h2 style="margin-bottom: 20px; color: var(--primary-blue);">📡 أنواع الرادارات المدعومة</h2>
+                <div class="radar-types" id="radarTypesGrid"></div>
+            </div>
+
+            <!-- Guides Section -->
+            <div id="guidesSection" class="hidden">
+                <h2 style="margin-bottom: 20px; color: var(--primary-blue);">📚 أدلة الصيانة</h2>
+                
+                <div class="guide-card">
+                    <h3 class="guide-title">🔧 دليل الصيانة الوقائية</h3>
+                    <p>دليل شامل للصيانة الدورية للرادارات البحرية يشمل جداول الصيانة والفحوصات المطلوبة.</p>
+                    <ul>
+                        <li>فحص يومي للأنظمة الحيوية</li>
+                        <li>صيانة شهرية للمكونات الرئيسية</li>
+                        <li>صيانة سنوية شاملة</li>
+                    </ul>
+                </div>
+
+                <div class="guide-card">
+                    <h3 class="guide-title">📖 دليل استكشاف الأخطاء</h3>
+                    <p>منهجية منظمة لتشخيص الأعطال وحلها بكفاءة عالية.</p>
+                    <ul>
+                        <li>خطوات التشخيص الأولية</li>
+                        <li>استخدام أدوات القياس</li>
+                        <li>قراءة رموز الأخطاء</li>
+                    </ul>
+                </div>
+
+                <div class="guide-card">
+                    <h3 class="guide-title">🛠️ دليل قطع الغيار</h3>
+                    <p>قائمة شاملة بقطع الغيار الأصلية والبديلة لجميع أنواع الرادارات.</p>
+                    <ul>
+                        <li>قطع الغيار الأساسية</li>
+                        <li>قطع الغيار الاستهلاكية</li>
+                        <li>البدائل المعتمدة</li>
+                    </ul>
+                </div>
+
+                <div class="guide-card">
+                    <h3 class="guide-title">⚡ دليل السلامة</h3>
+                    <p>إرشادات السلامة والوقاية أثناء العمل على الرادارات البحرية.</p>
+                    <ul>
+                        <li>إجراءات السلامة الكهربائية</li>
+                        <li>التعامل مع المكونات الخطرة</li>
+                        <li>معدات الحماية الشخصية</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- About Section -->
+            <div id="aboutSection" class="hidden">
+                <div class="content-section">
+                    <h2>ℹ️ عن المركز</h2>
+                    <p>
+                        مركز إصلاح الرادارات البحرية هو منصة متخصصة توفر مرجعاً شاملاً لصيانة وإصلاح
+                        رادارات Sperry Marine، خصوصاً رادارات VisionMaster وFusion.
+                    </p>
+                    <p>
+                        تأسس المركز بهدف جمع الخبرات الميدانية والحلول العملية في مكان واحد، ليكون
+                        مرجعاً موثوقاً للفنيين والمهندسين البحريين حول العالم.
+                    </p>
+
+                    <h3 style="color: var(--secondary-blue); margin-top: 30px; margin-bottom: 15px;">🎯 أهدافنا</h3>
+                    <ul>
+                        <li>توفير قاعدة بيانات شاملة للأعطال الشائعة وحلولها</li>
+                        <li>تسهيل عمل فنيي الصيانة من خلال شرح مفصل للإجراءات</li>
+                        <li>تقليل وقت التوقف عن العمل بتوفير حلول سريعة وفعالة</li>
+                        <li>بناء مجتمع من المتخصصين لتبادل الخبرات</li>
+                    </ul>
+
+                    <h3 style="color: var(--secondary-blue); margin-top: 30px; margin-bottom: 15px;">💡 ما يميزنا</h3>
+                    <ul>
+                        <li>محتوى عربي وإنجليزي متخصص</li>
+                        <li>حلول مبنية على خبرات ميدانية حقيقية</li>
+                        <li>تحديثات دورية لقاعدة البيانات</li>
+                        <li>سهولة البحث والوصول للمعلومة</li>
+                        <li>دعم فني متخصص</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fault Detail Modal -->
+        <div class="modal" id="faultModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close-btn" onclick="closeModal('faultModal')">&times;</button>
+                    <h2 id="modalFaultCode" style="margin-bottom: 10px;"></h2>
+                    <p id="modalFaultTitle" style="opacity: 0.9;"></p>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>عن الموقع</h3>
+                    <p style="line-height: 1.8;">
+                        تم إنشاء هذا الموقع بهدف تسهيل الوصول إلى حلول المشاكل والأعطال للفنيين العاملين في مجال الرادارات البحرية، وتوفير مرجع عملي يساعدهم في الصيانة والتشخيص بسرعة ودقة.
+                    </p>
+                    <p style="line-height: 1.8; margin-top: 15px;">
+                        أنشأ هذا الموقع أخوكم <strong>الزبير هتان</strong>، بعد جهد وتعب في جمع وترتيب المعلومات، ليكون هذا العمل صدقة علمية يستفيد منها الجميع، ويساهم في مساعدة الجيل الحالي والقادم على الوصول إلى المعلومة بسهولة ووضوح، وتطوير مستوى العمل الفني في هذا المجال.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h3>الرادارات المدعومة</h3>
+                    <ul>
+                        <li>📡 Sperry VisionMaster FT</li>
+                        <li>🎯 Sperry Fusion</li>
+                        <li>🌐 VisionMaster Net</li>
+                        <li>⚓ Bridgemaster E</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>تواصل معنا</h3>
+                    <ul>
+                        <li>📧 <a href="mailto:alzubir839@gmail.com" style="color: white; text-decoration: none;">alzubir839@gmail.com</a></li>
+                        <li>📱 <a href="tel:+966531656514" style="color: white; text-decoration: none;">+966 531656514</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                © 2025 مركز إصلاح الرادارات البحرية - أنشأه الزبير هتان. جميع الحقوق محفوظة.
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="hidden">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">🛥️📡</div>
+                    <div>
+                        <h1>لوحة تحكم الأدمن</h1>
+                        <p class="subtitle">إدارة الأعطال والمحتوى</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="admin-panel">
+                <div class="admin-header">
+                    <h2 class="admin-title">🔧 إدارة الأعطال</h2>
+                    <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+                </div>
+
+                <!-- Admin Stats -->
+                <div class="stats-dashboard" style="margin-bottom: 30px;">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number" id="adminStatTotal">0</div>
+                        <div class="stat-label">إجمالي الأعطال</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔴</div>
+                        <div class="stat-number" id="adminStatCritical">0</div>
+                        <div class="stat-label">حرجة</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🟠</div>
+                        <div class="stat-number" id="adminStatHigh">0</div>
+                        <div class="stat-label">عالية</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-number" id="adminStatToday">0</div>
+                        <div class="stat-label">اليوم</div>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 12px; margin-bottom: 25px; border-right: 5px solid var(--secondary-blue);">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 10px;">👋 مرحباً بك في لوحة التحكم!</h3>
+                    <p style="color: #555; line-height: 1.8;">
+                        يمكنك إضافة أعطال جديدة، تعديل الأعطال الموجودة، أو حذفها من خلال الأزرار أدناه.
+                        كل التغييرات سيتم حفظها تلقائياً وستظهر مباشرة في الموقع.
+                    </p>
+                </div>
+
+                <button class="add-fault-btn" onclick="showAddFaultForm()">
+                    <span style="font-size: 1.3em;">➕</span>
+                    <span>إضافة عطل جديد</span>
+                </button>
+
+                <button class="add-fault-btn" onclick="showUserManagement()" style="background: var(--secondary-blue); margin-top: 15px;">
+                    <span style="font-size: 1.3em;">👥</span>
+                    <span>إدارة المستخدمين</span>
+                </button>
+
+                <table class="admin-table" id="adminTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">الكود</th>
+                            <th>العنوان</th>
+                            <th style="width: 150px;">الرادار</th>
+                            <th style="width: 120px;">الأولوية</th>
+                            <th style="width: 120px;">آخر تحديث</th>
+                            <th style="width: 200px;">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Fault Modal -->
+    <div class="modal" id="faultFormModal">
+        <div class="modal-content form-modal">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal('faultFormModal')">&times;</button>
+                <h2 id="formModalTitle">إضافة عطل جديد</h2>
+            </div>
+            <div class="modal-body">
+                <form id="faultForm" onsubmit="saveFault(event)">
+                    <input type="hidden" id="faultId">
+                    
+                    <div class="form-row">
+                        <label>كود العطل *</label>
+                        <input type="text" id="faultCode" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label>العنوان بالعربية *</label>
+                        <input type="text" id="faultTitleAr" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label>العنوان بالإنجليزية *</label>
+                        <input type="text" id="faultTitleEn" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label>نوع الرادار *</label>
+                        <select id="faultRadar" required>
+                            <option value="visionmaster">VisionMaster FT</option>
+                            <option value="fusion">Fusion</option>
+                            <option value="visionmaster-net">VisionMaster Net</option>
+                            <option value="bridgemaster">Bridgemaster E</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label>الأولوية *</label>
+                        <select id="faultSeverity" required>
+                            <option value="critical">حرجة - Critical</option>
+                            <option value="high">عالية - High</option>
+                            <option value="medium">متوسطة - Medium</option>
+                            <option value="low">منخفضة - Low</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label>الفئة *</label>
+                        <select id="faultCategory" required>
+                            <option value="display">العرض - Display</option>
+                            <option value="power">الطاقة - Power</option>
+                            <option value="antenna">الهوائي - Antenna</option>
+                            <option value="software">البرمجيات - Software</option>
+                            <option value="network">الشبكة - Network</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label>السبب بالعربية *</label>
+                        <textarea id="faultCauseAr" required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <label>السبب بالإنجليزية *</label>
+                        <textarea id="faultCauseEn" required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <label>التشخيص بالعربية (كل خطوة في سطر جديد)</label>
+                        <textarea id="faultDiagnosisAr" rows="6" placeholder="مثال:&#10;فحص مؤشر LED على الشاشة&#10;التحقق من توصيل الكابلات&#10;اختبار مصدر الطاقة"></textarea>
+                        <small style="color: #666; margin-top: 5px; display: block;">💡 اضغط Enter للانتقال لسطر جديد (خطوة جديدة)</small>
+                    </div>
+
+                    <div class="form-row">
+                        <label>التشخيص بالإنجليزية (كل خطوة في سطر جديد)</label>
+                        <textarea id="faultDiagnosisEn" rows="6" placeholder="Example:&#10;Check power LED on monitor&#10;Verify cable connections&#10;Test power supply"></textarea>
+                        <small style="color: #666; margin-top: 5px; display: block;">💡 Press Enter for new line (new step)</small>
+                    </div>
+
+                    <div class="form-row">
+                        <label>الحل بالعربية (كل خطوة في سطر جديد) *</label>
+                        <textarea id="faultSolutionAr" required rows="6" placeholder="مثال:&#10;إعادة توصيل الكابلات بإحكام&#10;استبدال الكابل التالف&#10;فحص مصدر الطاقة بالمالتيميتر"></textarea>
+                        <small style="color: #666; margin-top: 5px; display: block;">💡 اضغط Enter للانتقال لسطر جديد (خطوة جديدة)</small>
+                    </div>
+
+                    <div class="form-row">
+                        <label>الحل بالإنجليزية (كل خطوة في سطر جديد) *</label>
+                        <textarea id="faultSolutionEn" required rows="6" placeholder="Example:&#10;Reconnect cables firmly&#10;Replace damaged cable&#10;Test power supply with multimeter"></textarea>
+                        <small style="color: #666; margin-top: 5px; display: block;">💡 Press Enter for new line (new step)</small>
+                    </div>
+
+                    <div class="form-row">
+                        <label>الأدوات المطلوبة (مفصولة بفواصل)</label>
+                        <input type="text" id="faultTools" placeholder="Multimeter, Screwdriver, Cable tester">
+                        <small style="color: #666; margin-top: 5px; display: block;">💡 استخدم الفاصلة (,) للفصل بين الأدوات</small>
+                    </div>
+
+                    <div class="form-row">
+                        <label>الوقت المتوقع *</label>
+                        <input type="text" id="faultTime" required placeholder="30-60 minutes">
+                    </div>
+
+                    <div class="form-row">
+                        <label>صور العطل (اختياري)</label>
+                        <input type="file" id="faultImages" accept="image/*" multiple style="padding: 10px; border: 2px dashed var(--gray-border); border-radius: 8px; cursor: pointer;">
+                        <small style="color: #666; margin-top: 5px; display: block;">💡 يمكنك اختيار صورة أو أكثر (سيتم حفظها في المتصفح)</small>
+                        <div id="imagePreview" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button type="submit" class="save-btn">💾 حفظ العطل</button>
+                        <button type="button" class="cancel-btn" onclick="closeModal('faultFormModal')">❌ إلغاء</button>
+                    </div>
+                    
+                    <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px; border-right: 4px solid #ffc107;">
+                        <strong>📝 ملاحظات مهمة:</strong>
+                        <ul style="margin-top: 10px; margin-right: 20px; line-height: 1.8;">
+                            <li>تأكد من ملء جميع الحقول الإلزامية (*)</li>
+                            <li>كل خطوة في التشخيص والحل يجب أن تكون في سطر منفصل</li>
+                            <li>استخدم الفاصلة (,) للفصل بين الأدوات المختلفة</li>
+                            <li>سيتم حفظ تاريخ الإضافة/التعديل تلقائياً</li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management Modal -->
+    <div class="modal" id="userManagementModal">
+        <div class="modal-content" style="max-width: 700px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="color: var(--primary-blue); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <span>👥</span>
+                <span>إدارة المستخدمين</span>
+            </h2>
+            
+            <button class="add-fault-btn" onclick="showAddUserForm()" style="margin-bottom: 20px; width: 100%;">
+                <span style="font-size: 1.3em;">➕</span>
+                <span>إضافة مستخدم جديد</span>
+            </button>
+
+            <div id="usersList"></div>
+
+            <button type="button" onclick="closeModal('userManagementModal')" style="margin-top: 15px; background: #ddd; color: #333; width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                إغلاق
+            </button>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal" id="addUserModal">
+        <div class="login-container">
+            <h2 class="login-title">➕ إضافة مستخدم جديد</h2>
+            <form id="addUserForm" onsubmit="saveNewUser(event)">
+                <div class="form-group">
+                    <label>اسم المستخدم *</label>
+                    <input type="text" id="newUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور *</label>
+                    <input type="password" id="newPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>الصلاحية *</label>
+                    <select id="newUserRole" required style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em;">
+                        <option value="">اختر الصلاحية</option>
+                        <option value="admin">مدير (Admin)</option>
+                        <option value="supervisor">مشرف (Supervisor)</option>
+                        <option value="member">عضو (Member)</option>
+                    </select>
+                </div>
+                <button type="submit" class="login-btn">💾 حفظ</button>
+            </form>
+            
+            <button type="button" onclick="closeModal('addUserModal')" style="margin-top: 15px; background: #ddd; color: #333; width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                إلغاء
+            </button>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Admin credentials (في التطبيق الحقيقي، يجب أن تكون في قاعدة بيانات)
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'radar2025';
+
+        // Users database
+        let usersDatabase = [
+            { username: 'admin', password: 'radar2025', role: 'admin' },
+            { username: 'usr', password: '123', role: 'member' }
+        ];
+
+        // Faults Database
+        let faultsDatabase = [
+            {
+                id: 1,
+                code: "ERR-001",
+                title: "No Display on Screen",
+                titleAr: "عدم ظهور صورة على الشاشة",
+                radar: "visionmaster",
+                severity: "critical",
+                category: "display",
+                cause: "Power supply failure or loose VGA cable connection",
+                causeAr: "فشل في مصدر الطاقة أو ارتخاء كابل VGA",
+                diagnosis: [
+                    "Check power LED on monitor",
+                    "Verify VGA cable connection at both ends",
+                    "Test with alternate monitor if available",
+                    "Check power supply unit output voltage"
+                ],
+                diagnosisAr: [
+                    "فحص مؤشر LED على الشاشة",
+                    "التحقق من توصيل كابل VGA من الطرفين",
+                    "الاختبار بشاشة بديلة إن أمكن",
+                    "فحص جهد خرج وحدة الطاقة"
+                ],
+                solution: [
+                    "Reconnect VGA cable firmly",
+                    "Replace VGA cable if damaged",
+                    "Test power supply with multimeter (should output 12V DC)",
+                    "Replace power supply unit if faulty",
+                    "Check main board connections"
+                ],
+                solutionAr: [
+                    "إعادة توصيل كابل VGA بإحكام",
+                    "استبدال كابل VGA إذا كان تالفاً",
+                    "فحص مصدر الطاقة بالمالتيميتر (يجب أن يكون 12V DC)",
+                    "استبدال وحدة الطاقة إذا كانت معطلة",
+                    "فحص توصيلات اللوحة الرئيسية"
+                ],
+                tools: ["Multimeter", "Screwdriver set", "VGA cable tester"],
+                timeEstimate: "30-60 minutes",
+                lastUpdated: "2025-02-06"
+            },
+            {
+                id: 2,
+                code: "ERR-002",
+                title: "Radar Antenna Not Rotating",
+                titleAr: "الهوائي لا يدور",
+                radar: "fusion",
+                severity: "critical",
+                category: "antenna",
+                cause: "Motor failure, belt breakage, or control circuit issue",
+                causeAr: "عطل في المحرك، انقطاع السير، أو مشكلة في دائرة التحكم",
+                diagnosis: [
+                    "Listen for motor operation sound",
+                    "Check antenna drive belt condition",
+                    "Inspect motor power connections",
+                    "Test motor control circuit",
+                    "Check for mechanical obstructions"
+                ],
+                diagnosisAr: [
+                    "الاستماع لصوت تشغيل المحرك",
+                    "فحص حالة سير الهوائي",
+                    "فحص توصيلات طاقة المحرك",
+                    "اختبار دائرة التحكم بالمحرك",
+                    "التحقق من عدم وجود عوائق ميكانيكية"
+                ],
+                solution: [
+                    "Replace broken drive belt",
+                    "Clean and lubricate rotation mechanism",
+                    "Test motor separately and replace if needed",
+                    "Check and repair control circuit connections",
+                    "Reset motor controller",
+                    "Verify power supply to antenna unit (typically 24V DC)"
+                ],
+                solutionAr: [
+                    "استبدال سير الدوران المكسور",
+                    "تنظيف وتشحيم آلية الدوران",
+                    "اختبار المحرك بشكل منفصل واستبداله إن لزم",
+                    "فحص وإصلاح توصيلات دائرة التحكم",
+                    "إعادة ضبط متحكم المحرك",
+                    "التحقق من إمداد الطاقة لوحدة الهوائي (عادة 24V DC)"
+                ],
+                tools: ["Belt replacement kit", "Lubricant", "Voltage tester", "Wrench set"],
+                timeEstimate: "1-2 hours",
+                lastUpdated: "2025-02-05"
+            },
+            {
+                id: 3,
+                code: "ERR-003",
+                title: "Network Connection Lost",
+                titleAr: "فقدان الاتصال بالشبكة",
+                radar: "visionmaster-net",
+                severity: "high",
+                category: "network",
+                cause: "Ethernet cable fault, switch failure, or IP configuration error",
+                causeAr: "عطل في كابل الإيثرنت، فشل المحول، أو خطأ في إعدادات IP",
+                diagnosis: [
+                    "Check Ethernet cable for physical damage",
+                    "Verify link LED on network port",
+                    "Test cable with cable tester",
+                    "Ping radar IP address from workstation",
+                    "Check switch port status"
+                ],
+                diagnosisAr: [
+                    "فحص كابل الإيثرنت للتأكد من عدم وجود تلف",
+                    "التحقق من مؤشر LED على منفذ الشبكة",
+                    "اختبار الكابل بجهاز اختبار الكابلات",
+                    "عمل ping لعنوان IP من محطة العمل",
+                    "فحص حالة منفذ المحول"
+                ],
+                solution: [
+                    "Replace damaged Ethernet cable",
+                    "Verify IP address configuration (typically 192.168.x.x)",
+                    "Reset network switch",
+                    "Check firewall settings",
+                    "Reconfigure network adapter settings",
+                    "Update network drivers if needed"
+                ],
+                solutionAr: [
+                    "استبدال كابل الإيثرنت التالف",
+                    "التحقق من إعدادات عنوان IP (عادة 192.168.x.x)",
+                    "إعادة تشغيل محول الشبكة",
+                    "فحص إعدادات الجدار الناري",
+                    "إعادة تكوين إعدادات محول الشبكة",
+                    "تحديث برامج تشغيل الشبكة إن لزم"
+                ],
+                tools: ["Cable tester", "Replacement Ethernet cable", "Laptop"],
+                timeEstimate: "20-45 minutes",
+                lastUpdated: "2025-02-04"
+            },
+            {
+                id: 4,
+                code: "ERR-004",
+                title: "Software Freeze/Hang",
+                titleAr: "توقف البرنامج عن الاستجابة",
+                radar: "visionmaster",
+                severity: "high",
+                category: "software",
+                cause: "Memory overflow, corrupted data files, or software conflict",
+                causeAr: "امتلاء الذاكرة، ملفات بيانات تالفة، أو تعارض برمجي",
+                diagnosis: [
+                    "Check system resource usage (RAM, CPU)",
+                    "Review error logs in system directory",
+                    "Verify disk space availability",
+                    "Check for recently installed software",
+                    "Test in safe mode if available"
+                ],
+                diagnosisAr: [
+                    "فحص استخدام موارد النظام (RAM, CPU)",
+                    "مراجعة سجلات الأخطاء في مجلد النظام",
+                    "التحقق من توفر مساحة على القرص",
+                    "فحص البرامج المثبتة حديثاً",
+                    "الاختبار في الوضع الآمن إن أمكن"
+                ],
+                solution: [
+                    "Restart the radar system",
+                    "Clear temporary files and cache",
+                    "Update to latest software version",
+                    "Restore from backup if corruption detected",
+                    "Reset to factory defaults as last resort",
+                    "Contact technical support if issue persists"
+                ],
+                solutionAr: [
+                    "إعادة تشغيل نظام الرادار",
+                    "مسح الملفات المؤقتة والذاكرة المخبئية",
+                    "التحديث لأحدث إصدار من البرنامج",
+                    "الاستعادة من نسخة احتياطية إذا اكتشف تلف",
+                    "إعادة التعيين لإعدادات المصنع كحل أخير",
+                    "الاتصال بالدعم الفني إذا استمرت المشكلة"
+                ],
+                tools: ["USB drive for updates", "Backup storage"],
+                timeEstimate: "45-90 minutes",
+                lastUpdated: "2025-02-03"
+            },
+            {
+                id: 5,
+                code: "ERR-005",
+                title: "Poor Target Detection",
+                titleAr: "ضعف كشف الأهداف",
+                radar: "fusion",
+                severity: "medium",
+                category: "antenna",
+                cause: "Antenna alignment issue, receiver sensitivity degradation, or interference",
+                causeAr: "مشكلة في محاذاة الهوائي، تدهور حساسية المستقبل، أو تداخل",
+                diagnosis: [
+                    "Check antenna alignment and level",
+                    "Test receiver sensitivity with known target",
+                    "Scan for external interference sources",
+                    "Verify gain and tuning settings",
+                    "Check waveguide for moisture or damage"
+                ],
+                diagnosisAr: [
+                    "فحص محاذاة ومستوى الهوائي",
+                    "اختبار حساسية المستقبل بهدف معروف",
+                    "البحث عن مصادر التداخل الخارجية",
+                    "التحقق من إعدادات الكسب والضبط",
+                    "فحص الموجه الموجي للرطوبة أو التلف"
+                ],
+                solution: [
+                    "Realign antenna to manufacturer specifications",
+                    "Adjust receiver sensitivity settings",
+                    "Replace waveguide if moisture detected",
+                    "Shield from interference sources",
+                    "Calibrate radar system",
+                    "Replace receiver unit if sensitivity cannot be restored"
+                ],
+                solutionAr: [
+                    "إعادة محاذاة الهوائي وفق مواصفات الشركة المصنعة",
+                    "ضبط إعدادات حساسية المستقبل",
+                    "استبدال الموجه الموجي إذا اكتشفت رطوبة",
+                    "الحماية من مصادر التداخل",
+                    "معايرة نظام الرادار",
+                    "استبدال وحدة المستقبل إذا لم يمكن استعادة الحساسية"
+                ],
+                tools: ["Alignment tools", "Moisture detector", "Signal generator", "Spectrum analyzer"],
+                timeEstimate: "2-4 hours",
+                lastUpdated: "2025-02-02"
+            }
+        ];
+
+        // Radar Types Data
+        const radarTypes = [
+            {
+                name: "VisionMaster FT",
+                nameAr: "فيجن ماستر FT",
+                model: "Sperry Marine",
+                icon: "📡",
+                description: "High-performance X-band radar system"
+            },
+            {
+                name: "Fusion",
+                nameAr: "فيوجن",
+                model: "Sperry Marine",
+                icon: "🎯",
+                description: "Integrated navigation system"
+            },
+            {
+                name: "VisionMaster Net",
+                nameAr: "فيجن ماستر نت",
+                model: "Sperry Marine",
+                icon: "🌐",
+                description: "Network-enabled radar solution"
+            },
+            {
+                name: "Bridgemaster E",
+                nameAr: "بريدج ماستر E",
+                model: "Sperry Marine",
+                icon: "⚓",
+                description: "Commercial vessel radar"
+            }
+        ];
+
+        let isLoggedIn = false;
+        let currentEditId = null;
+        let currentUserRole = null; // Track current user's role
+
+        // Initialize
+        function init() {
+            loadFromLocalStorage();
+            displayFaults(faultsDatabase.slice(0, 6));
+            displayRadarTypes();
+            updateStats();
+        }
+
+        // Local Storage
+        function saveToLocalStorage() {
+            localStorage.setItem('radarFaults', JSON.stringify(faultsDatabase));
+            localStorage.setItem('radarUsers', JSON.stringify(usersDatabase));
+        }
+
+        function loadFromLocalStorage() {
+            const stored = localStorage.getItem('radarFaults');
+            if (stored) {
+                faultsDatabase = JSON.parse(stored);
+            }
+            const storedUsers = localStorage.getItem('radarUsers');
+            if (storedUsers) {
+                usersDatabase = JSON.parse(storedUsers);
+            }
+        }
+
+        // Update Statistics
+        function updateStats() {
+            document.getElementById('statFaultsNum').textContent = faultsDatabase.length;
+            document.getElementById('statSolutionsNum').textContent = faultsDatabase.length * 3; // تقريبي
+        }
+
+        // Display faults
+        function displayFaults(faults, gridId = 'faultsGrid') {
+            const grid = document.getElementById(gridId);
+            
+            if (faults.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-results" style="grid-column: 1 / -1;">
+                        <div class="no-results-icon">🔍</div>
+                        <div class="no-results-text">لم يتم العثور على نتائج</div>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = faults.map(fault => `
+                <div class="fault-card" onclick="showFaultDetail(${fault.id})">
+                    <div class="fault-header">
+                        <div class="fault-code">${fault.code}</div>
+                        <div class="fault-title">${fault.titleAr}</div>
+                    </div>
+                    <div class="fault-body">
+                        <div class="fault-info">
+                            <div class="info-label">🔧 السبب:</div>
+                            <div class="info-content">${fault.causeAr}</div>
+                        </div>
+                        <div class="fault-info">
+                            <div class="info-label">⏱️ الوقت المتوقع:</div>
+                            <div class="info-content">${fault.timeEstimate}</div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                            <span class="severity-badge severity-${fault.severity}">
+                                ${getSeverityText(fault.severity)}
+                            </span>
+                            ${fault.lastUpdated ? `<span style="font-size: 0.8em; color: #999;">📅 ${fault.lastUpdated}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Display radar types
+        function displayRadarTypes() {
+            const grid = document.getElementById('radarTypesGrid');
+            grid.innerHTML = radarTypes.map(radar => `
+                <div class="radar-type-card">
+                    <div class="radar-icon">${radar.icon}</div>
+                    <div class="radar-name">${radar.nameAr}</div>
+                    <div class="radar-model">${radar.model}</div>
+                    <p style="margin-top: 10px; color: #666;">${radar.description}</p>
+                </div>
+            `).join('');
+        }
+
+        // Show fault detail modal
+        function showFaultDetail(id) {
+            const fault = faultsDatabase.find(f => f.id === id);
+            if (!fault) return;
+
+            document.getElementById('modalFaultCode').textContent = fault.code;
+            document.getElementById('modalFaultTitle').textContent = fault.titleAr;
+
+            document.getElementById('modalBody').innerHTML = `
+                <div class="detail-section">
+                    <div class="section-title">🔍 التشخيص</div>
+                    <ul class="step-list">
+                        ${fault.diagnosisAr.map(step => `<li>${step}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="section-title">✅ الحل</div>
+                    <ul class="step-list">
+                        ${fault.solutionAr.map(step => `<li>${step}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="section-title">🛠️ الأدوات المطلوبة</div>
+                    <div class="info-content">
+                        ${fault.tools.map(tool => `<span style="display: inline-block; background: var(--secondary-blue); color: white; padding: 5px 15px; margin: 5px; border-radius: 15px;">${tool}</span>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="section-title">⏱️ الوقت المتوقع للإصلاح</div>
+                    <div class="info-content" style="font-size: 1.2em; font-weight: bold; color: var(--accent-orange);">
+                        ${fault.timeEstimate}
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap;">
+                    <button onclick="printFaultReport(${id})" style="flex: 1; min-width: 150px; padding: 15px; background: var(--secondary-blue); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">
+                        🖨️ طباعة التقرير
+                    </button>
+                    <button onclick="copyFaultDetails(${id})" style="flex: 1; min-width: 150px; padding: 15px; background: var(--success-green); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">
+                        📋 نسخ التفاصيل
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('faultModal').classList.add('active');
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Search faults
+        function searchFaults() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!query) {
+                displayFaults(faultsDatabase, 'allFaultsGrid');
+                return;
+            }
+
+            const results = faultsDatabase.filter(fault => 
+                fault.code.toLowerCase().includes(query) ||
+                fault.title.toLowerCase().includes(query) ||
+                fault.titleAr.includes(query) ||
+                fault.cause.toLowerCase().includes(query) ||
+                fault.causeAr.includes(query)
+            );
+
+            displayFaults(results, 'allFaultsGrid');
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const radarFilter = document.getElementById('radarFilter').value;
+            const severityFilter = document.getElementById('severityFilter').value;
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const sortFilter = document.getElementById('sortFilter').value;
+
+            let filtered = [...faultsDatabase];
+            let activeFilters = [];
+
+            // Apply filters
+            if (radarFilter !== 'all') {
+                filtered = filtered.filter(f => f.radar === radarFilter);
+                activeFilters.push({type: 'radar', value: radarFilter, label: getRadarName(radarFilter)});
+            }
+            if (severityFilter !== 'all') {
+                filtered = filtered.filter(f => f.severity === severityFilter);
+                activeFilters.push({type: 'severity', value: severityFilter, label: getSeverityText(severityFilter)});
+            }
+            if (categoryFilter !== 'all') {
+                filtered = filtered.filter(f => f.category === categoryFilter);
+                activeFilters.push({type: 'category', value: categoryFilter, label: getCategoryName(categoryFilter)});
+            }
+
+            // Apply sorting
+            const severityOrder = { critical: 1, high: 2, medium: 3, low: 4 };
+            
+            if (sortFilter === 'newest') {
+                filtered.sort((a, b) => new Date(b.lastUpdated || '2025-01-01') - new Date(a.lastUpdated || '2025-01-01'));
+            } else if (sortFilter === 'oldest') {
+                filtered.sort((a, b) => new Date(a.lastUpdated || '2025-01-01') - new Date(b.lastUpdated || '2025-01-01'));
+            } else if (sortFilter === 'severity') {
+                filtered.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
+            } else if (sortFilter === 'code') {
+                filtered.sort((a, b) => a.code.localeCompare(b.code));
+            }
+
+            displayFaults(filtered, 'allFaultsGrid');
+            displayActiveFilters(activeFilters);
+            
+            // Show/hide clear button
+            const clearBtn = document.getElementById('clearFiltersBtn');
+            if (clearBtn) {
+                clearBtn.style.display = activeFilters.length > 0 ? 'block' : 'none';
+            }
+        }
+
+        function displayActiveFilters(filters) {
+            const container = document.getElementById('activeFilters');
+            if (!container) return;
+
+            if (filters.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = filters.map(filter => `
+                <div class="filter-tag">
+                    <span>${filter.label}</span>
+                    <span class="remove" onclick="removeFilter('${filter.type}')">&times;</span>
+                </div>
+            `).join('');
+        }
+
+        function removeFilter(type) {
+            if (type === 'radar') document.getElementById('radarFilter').value = 'all';
+            if (type === 'severity') document.getElementById('severityFilter').value = 'all';
+            if (type === 'category') document.getElementById('categoryFilter').value = 'all';
+            applyFilters();
+        }
+
+        function clearFilters() {
+            document.getElementById('radarFilter').value = 'all';
+            document.getElementById('severityFilter').value = 'all';
+            document.getElementById('categoryFilter').value = 'all';
+            document.getElementById('sortFilter').value = 'newest';
+            applyFilters();
+        }
+
+        function getRadarName(radar) {
+            const names = {
+                'visionmaster': 'VisionMaster FT',
+                'fusion': 'Fusion',
+                'visionmaster-net': 'VisionMaster Net',
+                'bridgemaster': 'Bridgemaster E'
+            };
+            return names[radar] || radar;
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                'display': 'العرض',
+                'power': 'الطاقة',
+                'antenna': 'الهوائي',
+                'software': 'البرمجيات',
+                'network': 'الشبكة'
+            };
+            return names[category] || category;
+        }
+
+        // Print fault report
+        function printFaultReport(id) {
+            const fault = faultsDatabase.find(f => f.id === id);
+            if (!fault) return;
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html dir="rtl" lang="ar">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>تقرير العطل - ${fault.code}</title>
+                    <style>
+                        body { 
+                            font-family: Arial, sans-serif; 
+                            padding: 40px; 
+                            direction: rtl;
+                            color: #333;
+                        }
+                        h1 { 
+                            color: #003366; 
+                            border-bottom: 3px solid #ff6600;
+                            padding-bottom: 15px;
+                            margin-bottom: 30px;
+                        }
+                        h2 { 
+                            color: #0066cc; 
+                            margin-top: 30px;
+                            margin-bottom: 15px;
+                        }
+                        .header-info {
+                            background: #f5f8fa;
+                            padding: 20px;
+                            border-radius: 8px;
+                            margin-bottom: 30px;
+                        }
+                        .info-row {
+                            margin-bottom: 10px;
+                            display: flex;
+                        }
+                        .info-label {
+                            font-weight: bold;
+                            min-width: 150px;
+                            color: #0066cc;
+                        }
+                        ol, ul { 
+                            line-height: 2; 
+                            margin-right: 30px;
+                        }
+                        li { 
+                            margin-bottom: 10px; 
+                        }
+                        .tools {
+                            background: #fff3cd;
+                            padding: 15px;
+                            border-radius: 5px;
+                            margin: 20px 0;
+                        }
+                        @media print {
+                            body { padding: 20px; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>تقرير العطل: ${fault.code}</h1>
+                    
+                    <div class="header-info">
+                        <div class="info-row">
+                            <span class="info-label">اسم العطل:</span>
+                            <span>${fault.titleAr}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">نوع الرادار:</span>
+                            <span>${getRadarName(fault.radar)}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">الأولوية:</span>
+                            <span>${getSeverityText(fault.severity)}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">الفئة:</span>
+                            <span>${getCategoryName(fault.category)}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">الوقت المتوقع:</span>
+                            <span>${fault.timeEstimate}</span>
+                        </div>
+                        ${fault.lastUpdated ? `
+                        <div class="info-row">
+                            <span class="info-label">آخر تحديث:</span>
+                            <span>${fault.lastUpdated}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <h2>🔍 السبب</h2>
+                    <p>${fault.causeAr}</p>
+
+                    <h2>🔎 التشخيص</h2>
+                    <ol>
+                        ${fault.diagnosisAr.map(step => `<li>${step}</li>`).join('')}
+                    </ol>
+
+                    <h2>✅ الحل</h2>
+                    <ol>
+                        ${fault.solutionAr.map(step => `<li>${step}</li>`).join('')}
+                    </ol>
+
+                    <div class="tools">
+                        <h2 style="margin-top: 0;">🛠️ الأدوات المطلوبة</h2>
+                        <ul>
+                            ${fault.tools.map(tool => `<li>${tool}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <hr style="margin-top: 50px; border: 1px solid #ddd;">
+                    <p style="text-align: center; color: #999; font-size: 0.9em;">
+                        تم الإنشاء بواسطة مركز إصلاح الرادارات البحرية - ${new Date().toLocaleDateString('ar-SA')}
+                    </p>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Copy fault details
+        function copyFaultDetails(id) {
+            const fault = faultsDatabase.find(f => f.id === id);
+            if (!fault) return;
+
+            const text = `
+تقرير العطل: ${fault.code}
+==================
+
+اسم العطل: ${fault.titleAr}
+نوع الرادار: ${getRadarName(fault.radar)}
+الأولوية: ${getSeverityText(fault.severity)}
+الوقت المتوقع: ${fault.timeEstimate}
+
+🔍 السبب:
+${fault.causeAr}
+
+🔎 التشخيص:
+${fault.diagnosisAr.map((step, i) => `${i + 1}. ${step}`).join('\n')}
+
+✅ الحل:
+${fault.solutionAr.map((step, i) => `${i + 1}. ${step}`).join('\n')}
+
+🛠️ الأدوات المطلوبة:
+${fault.tools.map(tool => `• ${tool}`).join('\n')}
+            `.trim();
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ تم نسخ التفاصيل بنجاح!');
+            }).catch(() => {
+                alert('❌ فشل النسخ. حاول مرة أخرى.');
+            });
+        }
+
+        // Get severity text
+        function getSeverityText(severity) {
+            const texts = {
+                critical: 'حرجة',
+                high: 'عالية',
+                medium: 'متوسطة',
+                low: 'منخفضة'
+            };
+            return texts[severity];
+        }
+
+        // Show sections
+        function showSection(section) {
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Hide all sections
+            document.getElementById('homeSection').classList.add('hidden');
+            document.getElementById('faultsSection').classList.add('hidden');
+            document.getElementById('radarTypesSection').classList.add('hidden');
+            document.getElementById('guidesSection').classList.add('hidden');
+            document.getElementById('aboutSection').classList.add('hidden');
+            
+            // Remove active class from all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected section and highlight nav
+            if (section === 'home') {
+                document.getElementById('homeSection').classList.remove('hidden');
+                document.querySelectorAll('.nav-btn')[0].classList.add('active');
+                displayFaults(faultsDatabase.slice(0, 6), 'faultsGrid');
+            } else if (section === 'faults') {
+                document.getElementById('faultsSection').classList.remove('hidden');
+                document.querySelectorAll('.nav-btn')[1].classList.add('active');
+                displayFaults(faultsDatabase, 'allFaultsGrid');
+            } else if (section === 'radar-types') {
+                document.getElementById('radarTypesSection').classList.remove('hidden');
+                document.querySelectorAll('.nav-btn')[2].classList.add('active');
+            } else if (section === 'guides') {
+                document.getElementById('guidesSection').classList.remove('hidden');
+                document.querySelectorAll('.nav-btn')[3].classList.add('active');
+            } else if (section === 'about') {
+                document.getElementById('aboutSection').classList.remove('hidden');
+                document.querySelectorAll('.nav-btn')[4].classList.add('active');
+            }
+        }
+
+        // Login functions
+        function showLogin() {
+            document.getElementById('loginModal').classList.add('active');
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            setTimeout(() => {
+                document.getElementById('username').focus();
+            }, 100);
+        }
+
+        function attemptLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                alert('⚠️ الرجاء إدخال اسم المستخدم وكلمة المرور');
+                return;
+            }
+
+            // Check against users database
+            const user = usersDatabase.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                isLoggedIn = true;
+                currentUserRole = user.role; // Save user role
+                document.getElementById('loginModal').classList.remove('active');
+                document.getElementById('mainSite').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+                loadAdminTable();
+                updateAdminStats();
+                applyRolePermissions(); // Apply permissions based on role
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Clear inputs
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('loginError').style.display = 'none';
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+            }
+        }
+
+        // Allow Enter key to login
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const usernameInput = document.getElementById('username');
+            
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        attemptLogin();
+                    }
+                });
+            }
+            
+            if (usernameInput) {
+                usernameInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        attemptLogin();
+                    }
+                });
+            }
+        });
+
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                isLoggedIn = false;
+                document.getElementById('adminPanel').classList.add('hidden');
+                document.getElementById('mainSite').classList.remove('hidden');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('loginError').style.display = 'none';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Admin functions
+        function loadAdminTable() {
+            const tbody = document.getElementById('adminTableBody');
+            const canEditDelete = currentUserRole === 'admin'; // Only admin can edit/delete
+            
+            tbody.innerHTML = faultsDatabase.map(fault => `
+                <tr>
+                    <td><strong>${fault.code}</strong></td>
+                    <td style="max-width: 250px;">${fault.titleAr}</td>
+                    <td><span style="background: var(--light-bg); padding: 5px 10px; border-radius: 5px; font-size: 0.9em;">${getRadarName(fault.radar)}</span></td>
+                    <td><span class="severity-badge severity-${fault.severity}">${getSeverityText(fault.severity)}</span></td>
+                    <td style="font-size: 0.85em; color: #666;">${fault.lastUpdated || 'غير متوفر'}</td>
+                    <td style="white-space: nowrap;">
+                        ${canEditDelete ? `
+                            <button class="action-btn edit-btn" onclick="editFault(${fault.id})" title="تعديل">✏️ تعديل</button>
+                            <button class="action-btn delete-btn" onclick="deleteFault(${fault.id})" title="حذف">🗑️ حذف</button>
+                        ` : '<span style="color: #999; font-size: 0.9em;">عرض فقط</span>'}
+                    </td>
+                </tr>
+            `).join('');
+            
+            updateAdminStats();
+        }
+
+        function updateAdminStats() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            document.getElementById('adminStatTotal').textContent = faultsDatabase.length;
+            document.getElementById('adminStatCritical').textContent = faultsDatabase.filter(f => f.severity === 'critical').length;
+            document.getElementById('adminStatHigh').textContent = faultsDatabase.filter(f => f.severity === 'high').length;
+            document.getElementById('adminStatToday').textContent = faultsDatabase.filter(f => f.lastUpdated === today).length;
+        }
+
+        function showAddFaultForm() {
+            currentEditId = null;
+            document.getElementById('formModalTitle').textContent = 'إضافة عطل جديد';
+            document.getElementById('faultForm').reset();
+            document.getElementById('faultFormModal').classList.add('active');
+        }
+
+        function editFault(id) {
+            const fault = faultsDatabase.find(f => f.id === id);
+            if (!fault) return;
+
+            currentEditId = id;
+            document.getElementById('formModalTitle').textContent = 'تعديل العطل';
+            
+            document.getElementById('faultId').value = fault.id;
+            document.getElementById('faultCode').value = fault.code;
+            document.getElementById('faultTitleAr').value = fault.titleAr;
+            document.getElementById('faultTitleEn').value = fault.title;
+            document.getElementById('faultRadar').value = fault.radar;
+            document.getElementById('faultSeverity').value = fault.severity;
+            document.getElementById('faultCategory').value = fault.category;
+            document.getElementById('faultCauseAr').value = fault.causeAr;
+            document.getElementById('faultCauseEn').value = fault.cause;
+            document.getElementById('faultDiagnosisAr').value = (fault.diagnosisAr || []).join('\n');
+            document.getElementById('faultDiagnosisEn').value = (fault.diagnosis || []).join('\n');
+            document.getElementById('faultSolutionAr').value = (fault.solutionAr || []).join('\n');
+            document.getElementById('faultSolutionEn').value = (fault.solution || []).join('\n');
+            document.getElementById('faultTools').value = (fault.tools || []).join(', ');
+            document.getElementById('faultTime').value = fault.timeEstimate;
+
+            document.getElementById('faultFormModal').classList.add('active');
+        }
+
+        function saveFault(event) {
+            event.preventDefault();
+
+            // Handle images
+            const imageFiles = document.getElementById('faultImages').files;
+            const imagePromises = [];
+            
+            for (let i = 0; i < imageFiles.length; i++) {
+                const promise = new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        resolve(e.target.result);
+                    };
+                    reader.readAsDataURL(imageFiles[i]);
+                });
+                imagePromises.push(promise);
+            }
+
+            Promise.all(imagePromises).then(images => {
+                const faultData = {
+                    code: document.getElementById('faultCode').value.trim(),
+                    titleAr: document.getElementById('faultTitleAr').value.trim(),
+                    title: document.getElementById('faultTitleEn').value.trim(),
+                    radar: document.getElementById('faultRadar').value,
+                    severity: document.getElementById('faultSeverity').value,
+                    category: document.getElementById('faultCategory').value,
+                    causeAr: document.getElementById('faultCauseAr').value.trim(),
+                    cause: document.getElementById('faultCauseEn').value.trim(),
+                    diagnosisAr: document.getElementById('faultDiagnosisAr').value.split('\n').map(s => s.trim()).filter(s => s),
+                    diagnosis: document.getElementById('faultDiagnosisEn').value.split('\n').map(s => s.trim()).filter(s => s),
+                    solutionAr: document.getElementById('faultSolutionAr').value.split('\n').map(s => s.trim()).filter(s => s),
+                    solution: document.getElementById('faultSolutionEn').value.split('\n').map(s => s.trim()).filter(s => s),
+                    tools: document.getElementById('faultTools').value.split(',').map(s => s.trim()).filter(s => s),
+                    timeEstimate: document.getElementById('faultTime').value.trim(),
+                    images: images, // Store base64 images
+                    lastUpdated: new Date().toISOString().split('T')[0]
+                };
+
+                // Validate required fields
+                if (!faultData.code || !faultData.titleAr || !faultData.title || !faultData.radar || 
+                    !faultData.severity || !faultData.category || !faultData.causeAr || !faultData.cause || 
+                    faultData.solutionAr.length === 0 || faultData.solution.length === 0 || !faultData.timeEstimate) {
+                    alert('⚠️ الرجاء ملء جميع الحقول المطلوبة');
+                    return;
+                }
+
+                if (currentEditId) {
+                    // Update existing
+                    const index = faultsDatabase.findIndex(f => f.id === currentEditId);
+                    if (index !== -1) {
+                        // Keep existing images if no new images uploaded
+                        if (images.length === 0 && faultsDatabase[index].images) {
+                            faultData.images = faultsDatabase[index].images;
+                        }
+                        faultsDatabase[index] = { ...faultsDatabase[index], ...faultData };
+                    }
+                } else {
+                    // Add new
+                    const newId = faultsDatabase.length > 0 ? Math.max(...faultsDatabase.map(f => f.id)) + 1 : 1;
+                    faultsDatabase.push({ id: newId, ...faultData });
+                }
+
+                saveToLocalStorage();
+                loadAdminTable();
+                updateStats();
+                displayFaults(faultsDatabase.slice(0, 6), 'faultsGrid');
+                displayFaults(faultsDatabase, 'allFaultsGrid');
+                closeModal('faultFormModal');
+                alert('✅ تم الحفظ بنجاح!');
+                
+                // Clear form and preview
+                document.getElementById('faultForm').reset();
+                document.getElementById('imagePreview').innerHTML = '';
+                currentEditId = null;
+            });
+        }
+
+        function deleteFault(id) {
+            const fault = faultsDatabase.find(f => f.id === id);
+            if (!fault) return;
+            
+            if (confirm(`⚠️ هل أنت متأكد من حذف هذا العطل؟\n\nالكود: ${fault.code}\nالعنوان: ${fault.titleAr}\n\nلا يمكن التراجع عن هذا الإجراء!`)) {
+                faultsDatabase = faultsDatabase.filter(f => f.id !== id);
+                saveToLocalStorage();
+                loadAdminTable();
+                updateStats();
+                
+                // Refresh main site if visible
+                if (!document.getElementById('adminPanel').classList.contains('hidden')) {
+                    displayFaults(faultsDatabase.slice(0, 6), 'faultsGrid');
+                    displayFaults(faultsDatabase, 'allFaultsGrid');
+                }
+                
+                alert('✅ تم الحذف بنجاح!');
+            }
+        }
+
+        // Search on Enter
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchFaults();
+                    }
+                });
+            }
+            
+            init();
+        });
+
+        // Close modal on outside click
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                // Don't close modal on ESC press
+                e.target.classList.remove('active');
+            }
+        });
+
+        // User Management Functions
+        function showUserManagement() {
+            loadUsersList();
+            document.getElementById('userManagementModal').classList.add('active');
+        }
+
+        function loadUsersList() {
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = usersDatabase.map((user, index) => `
+                <div class="user-card">
+                    <div class="user-info">
+                        <div class="user-name">👤 ${user.username}</div>
+                        <span class="user-role role-${user.role}">${getRoleText(user.role)}</span>
+                    </div>
+                    <div>
+                        ${index > 0 ? `<button class="delete-btn" onclick="deleteUser('${user.username}')" style="padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; background: var(--warning-red); color: white;">🗑️ حذف</button>` : '<span style="color: #999;">الحساب الرئيسي</span>'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getRoleText(role) {
+            const map = {
+                'admin': 'مدير',
+                'supervisor': 'مشرف',
+                'member': 'عضو'
+            };
+            return map[role] || role;
+        }
+
+        function showAddUserForm() {
+            document.getElementById('addUserForm').reset();
+            document.getElementById('addUserModal').classList.add('active');
+        }
+
+        function saveNewUser(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('newUsername').value.trim();
+            const password = document.getElementById('newPassword').value.trim();
+            const role = document.getElementById('newUserRole').value;
+
+            if (!username || !password || !role) {
+                alert('⚠️ الرجاء ملء جميع الحقول');
+                return;
+            }
+
+            // Check if username already exists
+            if (usersDatabase.find(u => u.username === username)) {
+                alert('⚠️ اسم المستخدم موجود بالفعل');
+                return;
+            }
+
+            usersDatabase.push({ username, password, role });
+            saveToLocalStorage();
+            loadUsersList();
+            closeModal('addUserModal');
+            alert('✅ تم إضافة المستخدم بنجاح!');
+        }
+
+        function deleteUser(username) {
+            if (username === 'admin') {
+                alert('⚠️ لا يمكن حذف الحساب الرئيسي');
+                return;
+            }
+
+            if (confirm(`⚠️ هل أنت متأكد من حذف المستخدم "${username}"؟`)) {
+                usersDatabase = usersDatabase.filter(u => u.username !== username);
+                saveToLocalStorage();
+                loadUsersList();
+                alert('✅ تم حذف المستخدم بنجاح!');
+            }
+        }
+
+        // Apply role-based permissions
+        function applyRolePermissions() {
+            const userManagementBtn = document.querySelector('button[onclick="showUserManagement()"]');
+            
+            if (currentUserRole === 'admin') {
+                // Admin has full access
+                if (userManagementBtn) userManagementBtn.style.display = 'flex';
+            } else {
+                // Supervisor and Member can only add faults
+                if (userManagementBtn) userManagementBtn.style.display = 'none';
+            }
+        }
+
+        // Handle image preview
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageInput = document.getElementById('faultImages');
+            if (imageInput) {
+                imageInput.addEventListener('change', function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.innerHTML = '';
+                    
+                    const files = Array.from(e.target.files);
+                    files.forEach((file, index) => {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const img = document.createElement('img');
+                            img.src = event.target.result;
+                            img.style.width = '100px';
+                            img.style.height = '100px';
+                            img.style.objectFit = 'cover';
+                            img.style.borderRadius = '8px';
+                            img.style.border = '2px solid var(--gray-border)';
+                            preview.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

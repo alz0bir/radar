@@ -470,7 +470,13 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle}
 
   <button class="login-btn" onclick="doLogin()">دخول إلى النظام</button>
 
-  <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px">
+  <div style="text-align:center;margin-top:14px">
+    <button onclick="openResetModal()" style="background:none;border:none;color:var(--td);font-size:12px;font-family:'Tajawal',sans-serif;cursor:pointer;letter-spacing:.5px;transition:color .2s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--td)'">
+      🔑 نسيت كلمة المرور؟ استعادة عبر رقم الجوال
+    </button>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px">
     <div style="width:6px;height:6px;border-radius:50%;background:var(--a2);animation:blink 2s infinite"></div>
     <span style="font-size:11px;font-family:'Share Tech Mono',monospace;color:var(--td);letter-spacing:1px">SECURE ACCESS — AUTHORIZED PERSONNEL ONLY</span>
   </div>
@@ -714,43 +720,82 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle}
   <div class="page" id="page-settings">
     <div class="ph">
       <div class="ph-title"><h2>إعدادات النظام</h2><p>SETTINGS — ضبط وتخصيص المنظومة</p></div>
-      <div class="ph-actions"><button class="btn btn-accent" onclick="saveSettings()">💾 حفظ</button></div>
+      <div class="ph-actions"><button class="btn btn-accent" onclick="saveSettings()">💾 حفظ الإعدادات</button></div>
     </div>
+
+    <div id="settingsBar" style="display:none;background:rgba(0,255,157,.06);border:1px solid rgba(0,255,157,.2);border-radius:7px;padding:11px 18px;font-size:13px;color:var(--a2);display:none;align-items:center;gap:10px">
+      <span>✓</span><span id="settingsBarMsg"></span>
+    </div>
+
     <div class="sg">
+      <!-- عام -->
       <div class="sc">
         <div class="sc-title">⚙ إعدادات عامة</div>
         <div class="fg"><label class="fl">اسم المنظومة</label><input class="fi" id="sName" value="منظومة الرادارات الساحلية – المنطقة الشمالية"></div>
         <div class="fg"><label class="fl">بريد التنبيهات</label><input class="fi" id="sEmail" value="alerts@coastal-radar.gov" type="email"></div>
-        <div class="fg"><label class="fl">توقيت النظام</label><select class="fs"><option selected>Arabia Standard Time (AST +3)</option><option>UTC+0</option><option>UTC+4</option></select></div>
-        <div class="fg"><label class="fl">الوصف</label><textarea class="ft" style="min-height:60px">نظام متكامل لمراقبة الرادارات الساحلية</textarea></div>
+        <div class="fg"><label class="fl">توقيت النظام</label>
+          <select class="fs" id="sTimezone">
+            <option value="AST+3" selected>Arabia Standard Time (AST +3)</option>
+            <option value="UTC+0">UTC+0</option><option value="UTC+4">UTC+4</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">الوصف</label><textarea class="ft" id="sDesc" style="min-height:60px">نظام متكامل لمراقبة الرادارات الساحلية</textarea></div>
       </div>
+
+      <!-- التنبيهات -->
       <div class="sc">
         <div class="sc-title">🔔 التنبيهات</div>
-        <div class="tr"><span class="tr-l">تنبيه عند عطل حرج</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
-        <div class="tr"><span class="tr-l">بريد عند تسجيل عطل</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
-        <div class="tr"><span class="tr-l">ملخص يومي</span><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
-        <div class="tr"><span class="tr-l">تنبيه اتصال/انقطاع رادار</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
-        <div class="tr"><span class="tr-l">صوت التنبيه</span><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+        <div class="tr"><span class="tr-l">تنبيه عند عطل حرج</span><button class="toggle on" id="tog-notif-critical" onclick="doToggle(this,'notif_critical')"></button></div>
+        <div class="tr"><span class="tr-l">تنبيه عند أي عطل جديد</span><button class="toggle on" id="tog-notif-any" onclick="doToggle(this,'notif_any')"></button></div>
+        <div class="tr"><span class="tr-l">ملخص يومي بالبريد</span><button class="toggle" id="tog-notif-daily" onclick="doToggle(this,'notif_daily')"></button></div>
+        <div class="tr"><span class="tr-l">تنبيه اتصال/انقطاع رادار</span><button class="toggle on" id="tog-notif-radar" onclick="doToggle(this,'notif_radar')"></button></div>
+        <div class="tr"><span class="tr-l">صوت التنبيه</span><button class="toggle" id="tog-notif-sound" onclick="doToggle(this,'notif_sound')"></button></div>
+        <div class="tr"><span class="tr-l">إشعارات المتصفح (Push)</span><button class="toggle" id="tog-notif-push" onclick="doToggle(this,'notif_push');reqPush(this)"></button></div>
+        <div style="margin-top:12px;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:5px;font-size:12px;color:var(--td)">
+          التنبيهات المفعّلة: <span id="activeNotifCount" style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:13px;font-weight:bold">5</span>
+        </div>
       </div>
+
+      <!-- الأمان -->
       <div class="sc">
         <div class="sc-title">🔒 الأمان</div>
-        <div class="tr"><span class="tr-l">المصادقة الثنائية (2FA)</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
-        <div class="tr"><span class="tr-l">خروج تلقائي بعد 30 دقيقة</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
-        <div class="tr"><span class="tr-l">تسجيل نشاط المستخدمين</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
-        <div style="height:14px"></div>
-        <div class="fg"><label class="fl">كلمة المرور الجديدة</label><input class="fi" type="password" placeholder="••••••••"></div>
-        <div class="fg"><label class="fl">تأكيد كلمة المرور</label><input class="fi" type="password" placeholder="••••••••"></div>
-        <button class="btn btn-warn btn-sm" onclick="showToast('تم تغيير كلمة المرور','ok')">تغيير كلمة المرور</button>
+        <div class="tr"><span class="tr-l">المصادقة الثنائية (2FA)</span><button class="toggle" id="tog-sec-2fa" onclick="doToggle(this,'sec_2fa')"></button></div>
+        <div class="tr"><span class="tr-l">خروج تلقائي عند الخمول</span><button class="toggle on" id="tog-sec-auto" onclick="doToggle(this,'sec_auto')"></button></div>
+        <div class="tr" style="padding-right:16px">
+          <span class="tr-l" style="font-size:12px">مدة الخروج التلقائي</span>
+          <select class="sel" id="sAutoLogout" style="font-size:12px;padding:4px 8px" onchange="sysSet.auto_logout=+this.value">
+            <option value="15">15 دقيقة</option><option value="30" selected>30 دقيقة</option>
+            <option value="60">ساعة</option><option value="120">ساعتان</option>
+          </select>
+        </div>
+        <div class="tr"><span class="tr-l">تسجيل نشاطات المستخدمين</span><button class="toggle on" id="tog-sec-log" onclick="doToggle(this,'sec_log')"></button></div>
+        <div class="tr"><span class="tr-l">قفل الحساب بعد 5 محاولات</span><button class="toggle on" id="tog-sec-lock" onclick="doToggle(this,'sec_lock')"></button></div>
+        <div style="height:10px"></div>
+        <div style="font-size:11px;color:var(--td);margin-bottom:8px;font-family:'Share Tech Mono',monospace;letter-spacing:1px">CHANGE ADMIN PASSWORD</div>
+        <div class="fg"><label class="fl">كلمة المرور الحالية</label><input class="fi" id="sOldPass" type="password" placeholder="••••••••"></div>
+        <div class="fg"><label class="fl">كلمة المرور الجديدة</label><input class="fi" id="sNewPass" type="password" placeholder="••••••••" oninput="passStrBar(this.value,'sPSFill','sPSLbl')"></div>
+        <div id="sPSFill" style="height:4px;background:var(--s3);border-radius:2px;margin:-10px 0 8px;overflow:hidden"><div id="sPSFill_inner" style="height:100%;width:0;border-radius:2px;transition:all .3s"></div></div>
+        <div id="sPSLbl" style="font-size:10px;color:var(--td);margin-bottom:10px"></div>
+        <div class="fg"><label class="fl">تأكيد كلمة المرور الجديدة</label><input class="fi" id="sNewPass2" type="password" placeholder="••••••••"></div>
+        <button class="btn btn-warn btn-sm" style="width:100%" onclick="changeMyPassword()">🔑 تغيير كلمة المرور</button>
+        <div id="myPassMsg" style="display:none;margin-top:8px;padding:9px 13px;border-radius:5px;font-size:12px"></div>
       </div>
+
+      <!-- الواجهة -->
       <div class="sc">
-        <div class="sc-title">🎨 الواجهة</div>
-        <div class="tr"><span class="tr-l">الوضع الداكن</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
-        <div class="tr"><span class="tr-l">تأثير رادار الخلفية</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
-        <div class="tr"><span class="tr-l">تحديث تلقائي</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
-        <div class="tr"><span class="tr-l">شريط الأخبار</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
-        <div style="height:14px"></div>
-        <div class="fg"><label class="fl">سجلات بالصفحة</label><select class="fs"><option>25</option><option selected>50</option><option>100</option></select></div>
-        <button class="btn btn-danger btn-sm" style="margin-top:6px" onclick="confirmAction('مسح جميع بيانات الأعطال؟',()=>{faults=[];renderAll();showToast('تم المسح','ok')})">🗑 مسح بيانات الأعطال</button>
+        <div class="sc-title">🎨 الواجهة والعرض</div>
+        <div class="tr"><span class="tr-l">تأثير الشبكة في الخلفية</span><button class="toggle on" id="tog-ui-grid" onclick="doToggle(this,'ui_grid');applyGrid()"></button></div>
+        <div class="tr"><span class="tr-l">شريط الأخبار المتحرك</span><button class="toggle on" id="tog-ui-ticker" onclick="doToggle(this,'ui_ticker');applyTicker()"></button></div>
+        <div class="tr"><span class="tr-l">تحديث البيانات تلقائياً</span><button class="toggle on" id="tog-ui-refresh" onclick="doToggle(this,'ui_refresh')"></button></div>
+        <div class="tr"><span class="tr-l">تأثيرات الحركة (Animations)</span><button class="toggle on" id="tog-ui-anim" onclick="doToggle(this,'ui_anim');applyAnims()"></button></div>
+        <div class="tr"><span class="tr-l">نبضة الحالة على بطاقات الرادار</span><button class="toggle on" id="tog-ui-pulse" onclick="doToggle(this,'ui_pulse')"></button></div>
+        <div style="height:10px"></div>
+        <div class="fg"><label class="fl">عدد السجلات بالصفحة</label>
+          <select class="fs" id="sPageSize" onchange="sysSet.page_size=+this.value">
+            <option value="25">25</option><option value="50" selected>50</option><option value="100">100</option>
+          </select>
+        </div>
+        <button class="btn btn-danger btn-sm" style="width:100%;margin-top:4px" onclick="confirmAction('مسح جميع بيانات الأعطال نهائياً؟',()=>{faults=[];renderAll();logAct('🗑','مسح جميع الأعطال');showToast('تم المسح','ok')})">🗑 مسح بيانات الأعطال</button>
       </div>
     </div>
   </div>
@@ -875,6 +920,102 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle}
   <div class="mh"><h3>👤 الملف الشخصي</h3><button class="mx" onclick="closeMo('profileModal')">✕</button></div>
   <div class="mb" id="profileBody"></div>
   <div class="mf"><button class="btn btn-ghost" onclick="closeMo('profileModal')">إغلاق</button><button class="btn btn-accent" onclick="saveProfile()">💾 حفظ التغييرات</button></div>
+</div>
+</div>
+
+<!-- ══ RESET PASSWORD VIA PHONE ══ -->
+
+<div class="mo" id="resetPassModal">
+<div class="modal" style="max-width:460px">
+  <div class="mh"><h3>🔑 استعادة كلمة المرور</h3><button class="mx" onclick="closeMo('resetPassModal')">✕</button></div>
+  <div class="mb">
+
+```
+<!-- الخطوة 1: التحقق من الهوية -->
+<div id="rstStep1">
+  <div style="text-align:center;margin-bottom:20px">
+    <div style="font-size:44px;margin-bottom:8px">📱</div>
+    <div style="font-size:15px;font-weight:900;color:#fff;margin-bottom:5px">استعادة عبر رقم الجوال</div>
+    <div style="font-size:12px;color:var(--td)">أدخل اسم المستخدم ورقم الجوال المسجّل</div>
+  </div>
+  <div class="fg"><label class="fl">اسم المستخدم</label><input class="fi" id="rstUser" placeholder="اسم المستخدم"></div>
+  <div class="fg"><label class="fl">رقم الجوال</label><input class="fi" id="rstPhone" type="tel" placeholder="+966 5X XXX XXXX"></div>
+  <div id="rstErr1" style="display:none;padding:9px 13px;border-radius:5px;font-size:12px;margin-top:6px"></div>
+</div>
+
+<!-- الخطوة 2: رمز التحقق OTP -->
+<div id="rstStep2" style="display:none">
+  <div style="text-align:center;margin-bottom:20px">
+    <div style="font-size:44px;margin-bottom:8px">💬</div>
+    <div style="font-size:15px;font-weight:900;color:#fff;margin-bottom:5px">رمز التحقق</div>
+    <div style="font-size:12px;color:var(--td)">تم إرسال رمز مؤقت إلى</div>
+    <div id="rstPhoneTxt" style="font-family:'Share Tech Mono',monospace;color:var(--accent);font-size:14px;margin-top:4px"></div>
+  </div>
+  <div class="fg">
+    <label class="fl">رمز التحقق (6 أرقام)</label>
+    <input class="fi" id="rstOtp" maxlength="6" placeholder="● ● ● ● ● ●"
+      style="text-align:center;font-family:'Share Tech Mono',monospace;font-size:22px;letter-spacing:8px"
+      oninput="this.value=this.value.replace(/\D/g,'')">
+  </div>
+  <div style="text-align:center;font-size:11px;color:var(--td);margin-top:-8px">
+    الرمز التجريبي: <span id="rstOtpShow" style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-weight:bold"></span>
+  </div>
+  <div id="rstErr2" style="display:none;padding:9px 13px;border-radius:5px;font-size:12px;margin-top:10px"></div>
+</div>
+
+<!-- الخطوة 3: كلمة المرور الجديدة -->
+<div id="rstStep3" style="display:none">
+  <div style="text-align:center;margin-bottom:20px">
+    <div style="font-size:44px;margin-bottom:8px">🔐</div>
+    <div style="font-size:15px;font-weight:900;color:#fff;margin-bottom:5px">كلمة المرور الجديدة</div>
+    <div style="font-size:12px;color:var(--td)">اختر كلمة مرور قوية</div>
+  </div>
+  <div class="fg"><label class="fl">كلمة المرور الجديدة</label>
+    <input class="fi" id="rstNewP" type="password" placeholder="••••••••"
+      oninput="passStrBar(this.value,'rstPSBar','rstPSLbl')">
+  </div>
+  <div style="height:5px;background:var(--s3);border-radius:3px;margin:-8px 0 6px;overflow:hidden">
+    <div id="rstPSBar" style="height:100%;width:0;border-radius:3px;transition:all .3s"></div>
+  </div>
+  <div id="rstPSLbl" style="font-size:10px;color:var(--td);margin-bottom:12px"></div>
+  <div class="fg"><label class="fl">تأكيد كلمة المرور</label><input class="fi" id="rstNewP2" type="password" placeholder="••••••••"></div>
+  <div id="rstErr3" style="display:none;padding:9px 13px;border-radius:5px;font-size:12px"></div>
+</div>
+```
+
+  </div>
+  <div class="mf">
+    <button id="rstBackBtn" class="btn btn-ghost" onclick="rstBack()" style="display:none">↩ رجوع</button>
+    <button class="btn btn-ghost" onclick="closeMo('resetPassModal')">إلغاء</button>
+    <button id="rstNextBtn" class="btn btn-accent" onclick="rstNext()">إرسال الرمز ←</button>
+  </div>
+</div>
+</div>
+
+<!-- ══ ADMIN RESET MEMBER PASSWORD ══ -->
+
+<div class="mo" id="adminResetModal">
+<div class="modal" style="max-width:440px">
+  <div class="mh"><h3>🔑 إعادة تعيين كلمة مرور عضو</h3><button class="mx" onclick="closeMo('adminResetModal')">✕</button></div>
+  <div class="mb">
+    <div style="background:rgba(255,153,0,.07);border:1px solid rgba(255,153,0,.2);border-radius:6px;padding:11px 15px;margin-bottom:16px;font-size:13px;color:var(--warn)">
+      ⚠ إعادة تعيين كلمة مرور: <strong id="arMemberName" style="color:#fff"></strong>
+    </div>
+    <div class="fg"><label class="fl">كلمة المرور الجديدة</label>
+      <input class="fi" id="arNewP" type="password" placeholder="••••••••"
+        oninput="passStrBar(this.value,'arPSBar','arPSLbl')">
+    </div>
+    <div style="height:5px;background:var(--s3);border-radius:3px;margin:-8px 0 6px;overflow:hidden">
+      <div id="arPSBar" style="height:100%;width:0;border-radius:3px;transition:all .3s"></div>
+    </div>
+    <div id="arPSLbl" style="font-size:10px;color:var(--td);margin-bottom:12px"></div>
+    <div class="fg"><label class="fl">تأكيد كلمة المرور</label><input class="fi" id="arNewP2" type="password" placeholder="••••••••"></div>
+    <div id="arMsg" style="display:none;padding:9px 13px;border-radius:5px;font-size:12px;margin-top:8px"></div>
+  </div>
+  <div class="mf">
+    <button class="btn btn-ghost" onclick="closeMo('adminResetModal')">إلغاء</button>
+    <button class="btn btn-warn" onclick="doAdminReset()">🔑 تعيين كلمة المرور</button>
+  </div>
 </div>
 </div>
 
@@ -1580,10 +1721,11 @@ function renderMembers() {
       <td><span class="badge ${m.status==='active'?'b-online':'b-offline'}">${m.status==='active'?'نشط':'معطل'}</span></td>
       <td>
         ${isAdmin?`
-        <div style="display:flex;gap:4px">
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
           <button class="btn btn-warn btn-xs" onclick="openMemberModal('${m.id}')">تعديل</button>
+          <button class="btn btn-purple btn-xs" onclick="openAdminReset('${m.id}')">🔑 كلمة المرور</button>
           <button class="btn ${m.status==='active'?'btn-ghost':'btn-ok'} btn-xs" onclick="toggleMember('${m.id}')">${m.status==='active'?'تعليق':'تفعيل'}</button>
-          <button class="btn btn-danger btn-xs" onclick="confirmAction('حذف ${m.name}؟',()=>deleteMember('${m.id}'))">حذف</button>
+          <button class="btn btn-danger btn-xs" onclick="confirmAction('حذف ${m.name}؟ لا يمكن التراجع.',()=>deleteMember('${m.id}'))">حذف</button>
         </div>`:'—'}
       </td>
     </tr>`).join('');
@@ -1756,11 +1898,271 @@ function saveProfile() {
 }
 
 /* ══════════════════════════════════════
-   SETTINGS
+   SETTINGS — FULLY WORKING ENGINE
 ══════════════════════════════════════ */
+const sysSet = {
+  name:'منظومة الرادارات الساحلية – المنطقة الشمالية',
+  email:'alerts@coastal-radar.gov',
+  timezone:'AST+3', desc:'نظام متكامل لمراقبة الرادارات الساحلية',
+  page_size:50, auto_logout:30,
+  notif_critical:true, notif_any:true, notif_daily:false,
+  notif_radar:true, notif_sound:false, notif_push:false,
+  sec_2fa:false, sec_auto:true, sec_log:true, sec_lock:true,
+  ui_grid:true, ui_ticker:true, ui_refresh:true, ui_anim:true, ui_pulse:true,
+};
+
+function doToggle(btn, key) {
+  btn.classList.toggle('on');
+  sysSet[key] = btn.classList.contains('on');
+  updateNotifCount();
+  flashSettingsBar(`${sysSet[key] ? '✓ تم تفعيل' : '○ تم تعطيل'} الإعداد`);
+}
+
+function updateNotifCount() {
+  const n = ['notif_critical','notif_any','notif_daily','notif_radar','notif_sound','notif_push']
+    .filter(k=>sysSet[k]).length;
+  const el = document.getElementById('activeNotifCount');
+  if(el) el.textContent = n;
+}
+
+function flashSettingsBar(msg) {
+  const bar = document.getElementById('settingsBar');
+  const m = document.getElementById('settingsBarMsg');
+  if(!bar||!m) return;
+  m.textContent = msg;
+  bar.style.display = 'flex';
+  clearTimeout(bar._t);
+  bar._t = setTimeout(()=>{ bar.style.display='none'; }, 3000);
+}
+
 function saveSettings() {
+  const f = (id) => { const e=document.getElementById(id); return e?e.value:''; };
+  sysSet.name = f('sName') || sysSet.name;
+  sysSet.email = f('sEmail') || sysSet.email;
+  sysSet.desc = f('sDesc') || sysSet.desc;
+  sysSet.timezone = f('sTimezone') || sysSet.timezone;
+  sysSet.page_size = +f('sPageSize') || 50;
+  sysSet.auto_logout = +f('sAutoLogout') || 30;
+  document.title = sysSet.name;
   logAct('⚙','حفظ إعدادات النظام');
-  showToast('تم حفظ الإعدادات','ok');
+  flashSettingsBar('✓ تم حفظ جميع الإعدادات بنجاح');
+  showToast('✓ تم حفظ الإعدادات','ok');
+}
+
+function reqPush(btn) {
+  if(!('Notification' in window)) { showToast('المتصفح لا يدعم الإشعارات','danger'); btn.classList.remove('on'); sysSet.notif_push=false; return; }
+  Notification.requestPermission().then(p=>{
+    if(p==='granted') showToast('✓ إشعارات المتصفح مفعّلة','ok');
+    else { btn.classList.remove('on'); sysSet.notif_push=false; showToast('تم رفض إذن الإشعارات','warn'); }
+  });
+}
+
+/* UI toggles that have real visual effects */
+function applyGrid() {
+  const el = document.querySelector('.grid-bg');
+  if(el) el.style.opacity = sysSet.ui_grid ? '' : '0';
+}
+function applyTicker() {
+  const el = document.querySelector('.ticker-wrap');
+  if(el) el.style.visibility = sysSet.ui_ticker ? '' : 'hidden';
+}
+function applyAnims() {
+  let s = document.getElementById('noAnimCSS');
+  if(!sysSet.ui_anim) {
+    if(!s) { s=document.createElement('style'); s.id='noAnimCSS'; document.head.appendChild(s); }
+    s.textContent = '*{animation-duration:0.001s!important;transition-duration:0.001s!important}';
+  } else { if(s) s.remove(); }
+}
+
+/* ── تغيير كلمة مرور المدير الحالي ── */
+async function changeMyPassword() {
+  const oldP = document.getElementById('sOldPass').value;
+  const newP = document.getElementById('sNewPass').value;
+  const newP2 = document.getElementById('sNewPass2').value;
+  const msgEl = document.getElementById('myPassMsg');
+  const showM = (txt,ok)=>{
+    msgEl.textContent=txt; msgEl.style.display='block';
+    msgEl.style.cssText+=`;background:${ok?'rgba(0,255,157,.08)':'rgba(255,51,51,.1)'};border:1px solid ${ok?'rgba(0,255,157,.25)':'rgba(255,51,51,.3)'};color:${ok?'var(--a2)':'var(--danger)'}`;
+  };
+  if(!oldP||!newP||!newP2){showM('يرجى ملء جميع الحقول',false);return;}
+  if(newP!==newP2){showM('كلمتا المرور غير متطابقتين',false);return;}
+  if(newP.length<8){showM('كلمة المرور يجب أن تكون 8 أحرف على الأقل',false);return;}
+  const uRec = USERS.find(x=>x.username===currentUser.username);
+  if(!uRec){showM('خطأ داخلي',false);return;}
+  const valid = await checkCredentials(currentUser.username, oldP, uRec);
+  if(!valid){showM('❌ كلمة المرور الحالية غير صحيحة',false);return;}
+  uRec.passwordHash = await sha256(newP);
+  ['sOldPass','sNewPass','sNewPass2'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('sPSFill_inner').style.width='0';
+  document.getElementById('sPSLbl').textContent='';
+  showM('✓ تم تغيير كلمة المرور بنجاح',true);
+  logAct('🔑','تغيير كلمة مرور المدير من الإعدادات');
+}
+
+/* ══════════════════════════════════════
+   PASSWORD STRENGTH BAR
+══════════════════════════════════════ */
+function passStrBar(pass, barId, lblId) {
+  /* barId could be the fill div directly OR a wrapper with _inner child */
+  let fill = document.getElementById(barId+'_inner') || document.getElementById(barId);
+  let lbl  = document.getElementById(lblId);
+  if(!fill||!lbl) return;
+  let s=0;
+  if(pass.length>=8)s++;
+  if(pass.length>=12)s++;
+  if(/[A-Z]/.test(pass))s++;
+  if(/[0-9]/.test(pass))s++;
+  if(/[^A-Za-z0-9]/.test(pass))s++;
+  const lvl=[
+    {w:'0',c:'transparent',t:''},
+    {w:'20%',c:'#ff3333',t:'ضعيفة جداً'},
+    {w:'40%',c:'#ff7700',t:'ضعيفة'},
+    {w:'60%',c:'#ffcc00',t:'متوسطة'},
+    {w:'80%',c:'#88dd00',t:'جيدة'},
+    {w:'100%',c:'#00ff9d',t:'قوية جداً ✓'},
+  ][Math.min(s,5)];
+  fill.style.width=lvl.w; fill.style.background=lvl.c;
+  lbl.textContent=lvl.t?`قوة كلمة المرور: ${lvl.t}`:''; lbl.style.color=lvl.c;
+}
+
+/* ══════════════════════════════════════
+   ADMIN FORCE-RESET MEMBER PASSWORD
+══════════════════════════════════════ */
+let arTargetId = null;
+
+function openAdminReset(memberId) {
+  const m = members.find(x=>x.id===memberId);
+  if(!m) return;
+  arTargetId = memberId;
+  document.getElementById('arMemberName').textContent = m.name;
+  ['arNewP','arNewP2'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('arMsg').style.display='none';
+  document.getElementById('arPSBar').style.width='0';
+  document.getElementById('arPSLbl').textContent='';
+  openMo('adminResetModal');
+}
+
+async function doAdminReset() {
+  const newP = document.getElementById('arNewP').value;
+  const newP2 = document.getElementById('arNewP2').value;
+  const msgEl = document.getElementById('arMsg');
+  const showM = (txt,ok)=>{
+    msgEl.textContent=txt; msgEl.style.display='block';
+    msgEl.style.cssText+=`;background:${ok?'rgba(0,255,157,.08)':'rgba(255,51,51,.1)'};border:1px solid ${ok?'rgba(0,255,157,.25)':'rgba(255,51,51,.3)'};color:${ok?'var(--a2)':'var(--danger)'}`;
+  };
+  if(!newP||!newP2){showM('يرجى ملء الحقلين',false);return;}
+  if(newP!==newP2){showM('كلمتا المرور غير متطابقتين',false);return;}
+  if(newP.length<8){showM('8 أحرف على الأقل',false);return;}
+  const m = members.find(x=>x.id===arTargetId);
+  if(!m){showM('خطأ: العضو غير موجود',false);return;}
+  const h = await sha256(newP);
+  let uRec = USERS.find(x=>x.username===m.username);
+  if(uRec) uRec.passwordHash=h;
+  else USERS.push({username:m.username,passwordHash:h,role:m.role,name:m.name,email:m.email,avatar:m.name[0]});
+  logAct('🔑',`إعادة تعيين كلمة مرور العضو: ${m.name}`);
+  showM(`✓ تم تعيين كلمة مرور جديدة لـ ${m.name}`,true);
+  setTimeout(()=>closeMo('adminResetModal'),2000);
+  showToast(`✓ تم تعيين كلمة مرور جديدة لـ ${m.name}`,'ok');
+}
+
+/* ══════════════════════════════════════
+   PASSWORD RESET VIA PHONE — 3 STEPS
+══════════════════════════════════════ */
+let rstStep=1, rstOtp=null, rstTarget=null;
+
+function openResetModal() {
+  rstStep=1; rstOtp=null; rstTarget=null;
+  // Reset UI
+  document.getElementById('rstStep1').style.display='';
+  document.getElementById('rstStep2').style.display='none';
+  document.getElementById('rstStep3').style.display='none';
+  ['rstUser','rstPhone','rstOtp','rstNewP','rstNewP2'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['rstErr1','rstErr2','rstErr3'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
+  document.getElementById('rstPSBar').style.width='0';
+  document.getElementById('rstPSLbl').textContent='';
+  document.getElementById('rstBackBtn').style.display='none';
+  document.getElementById('rstNextBtn').textContent='إرسال الرمز ←';
+  document.getElementById('rstNextBtn').style.display='';
+  openMo('resetPassModal');
+}
+
+function rstShowErr(step, msg) {
+  const e=document.getElementById(`rstErr${step}`);
+  if(!e)return;
+  e.textContent=msg; e.style.display='block';
+  e.style.cssText+=';background:rgba(255,51,51,.1);border:1px solid rgba(255,51,51,.3);color:var(--danger)';
+}
+function rstShowOk(step, msg) {
+  const e=document.getElementById(`rstErr${step}`);
+  if(!e)return;
+  e.textContent=msg; e.style.display='block';
+  e.style.cssText+=';background:rgba(0,255,157,.08);border:1px solid rgba(0,255,157,.25);color:var(--a2)';
+}
+
+async function rstNext() {
+  if(rstStep===1) {
+    const uname = document.getElementById('rstUser').value.trim().toLowerCase();
+    const phone = document.getElementById('rstPhone').value.trim().replace(/[\s\-]/g,'');
+    if(!uname||!phone){rstShowErr(1,'يرجى ملء جميع الحقول');return;}
+    const m = members.find(x=>x.username===uname);
+    if(!m){rstShowErr(1,'⚠ اسم المستخدم غير موجود في النظام');return;}
+    const mPhone = (m.phone||'').replace(/[\s\-]/g,'');
+    if(!mPhone){rstShowErr(1,'⚠ لا يوجد رقم جوال مسجّل — تواصل مع المدير');return;}
+    // قبول أشكال مختلفة للرقم
+    const norm = (p)=>p.replace(/^00966|^\+966|^0/,'');
+    if(norm(phone)!==norm(mPhone)){rstShowErr(1,'⚠ رقم الجوال لا يتطابق مع المسجّل في الحساب');return;}
+    rstTarget = m;
+    rstOtp = String(Math.floor(100000+Math.random()*900000));
+    // الانتقال للخطوة 2
+    document.getElementById('rstStep1').style.display='none';
+    document.getElementById('rstStep2').style.display='';
+    document.getElementById('rstPhoneTxt').textContent = m.phone;
+    document.getElementById('rstOtpShow').textContent = rstOtp;
+    document.getElementById('rstBackBtn').style.display='inline-flex';
+    document.getElementById('rstNextBtn').textContent='تحقق ←';
+    rstStep=2;
+
+  } else if(rstStep===2) {
+    const entered = document.getElementById('rstOtp').value.trim();
+    if(!entered){rstShowErr(2,'أدخل رمز التحقق');return;}
+    if(entered!==rstOtp){rstShowErr(2,'⚠ الرمز غير صحيح — حاول مرة أخرى');return;}
+    document.getElementById('rstStep2').style.display='none';
+    document.getElementById('rstStep3').style.display='';
+    document.getElementById('rstNextBtn').textContent='تعيين كلمة المرور ✓';
+    rstStep=3;
+
+  } else if(rstStep===3) {
+    const np = document.getElementById('rstNewP').value;
+    const np2 = document.getElementById('rstNewP2').value;
+    if(!np||!np2){rstShowErr(3,'يرجى ملء الحقلين');return;}
+    if(np!==np2){rstShowErr(3,'كلمتا المرور غير متطابقتين');return;}
+    if(np.length<8){rstShowErr(3,'كلمة المرور يجب أن تكون 8 أحرف على الأقل');return;}
+    const h = await sha256(np);
+    let uRec = USERS.find(x=>x.username===rstTarget.username);
+    if(uRec) uRec.passwordHash=h;
+    else USERS.push({username:rstTarget.username,passwordHash:h,role:rstTarget.role,name:rstTarget.name,email:rstTarget.email,avatar:rstTarget.name[0]});
+    logAct('🔑',`استعادة كلمة مرور الحساب: ${rstTarget.name} عبر رقم الجوال`);
+    rstShowOk(3,'✓ تم تعيين كلمة المرور الجديدة بنجاح! يمكنك تسجيل الدخول الآن.');
+    document.getElementById('rstNextBtn').style.display='none';
+    document.getElementById('rstBackBtn').style.display='none';
+    setTimeout(()=>{closeMo('resetPassModal');showToast('✓ تم تعيين كلمة المرور الجديدة','ok');},2500);
+  }
+}
+
+function rstBack() {
+  if(rstStep===2){
+    document.getElementById('rstStep2').style.display='none';
+    document.getElementById('rstStep1').style.display='';
+    document.getElementById('rstBackBtn').style.display='none';
+    document.getElementById('rstNextBtn').textContent='إرسال الرمز ←';
+    rstStep=1;
+  } else if(rstStep===3){
+    document.getElementById('rstStep3').style.display='none';
+    document.getElementById('rstStep2').style.display='';
+    document.getElementById('rstNextBtn').textContent='تحقق ←';
+    document.getElementById('rstNextBtn').style.display='';
+    rstStep=2;
+  }
 }
 
 /* ══════════════════════════════════════

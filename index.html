@@ -4,1256 +4,1817 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>سجل أعطال الرادارات الساحلية</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<title>منظومة الرادارات الساحلية</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #050e18;
-    --surface: #071525;
-    --surface2: #0a1e30;
-    --border: #0d3352;
-    --accent: #00c8ff;
-    --accent2: #00ff9d;
-    --warn: #ff9900;
-    --danger: #ff3333;
-    --text: #c8e6f5;
-    --text-dim: #4a7a9b;
-    --glow: rgba(0,200,255,0.15);
-  }
-
-- { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-background: var(–bg);
-color: var(–text);
-font-family: ‘Tajawal’, sans-serif;
-min-height: 100vh;
-overflow-x: hidden;
+/* ══════════════════════════════════════
+   VARIABLES & RESET
+══════════════════════════════════════ */
+:root {
+  --bg:#040d16; --bg2:#061220; --surface:#071828;
+  --s2:#0a1e30; --s3:#0d2540; --s4:#112d4a;
+  --border:#0d3352; --border2:#1a4a6e; --border3:#255f8a;
+  --accent:#00c8ff; --a2:#00ff9d; --a3:#0088bb;
+  --warn:#ff9900; --danger:#ff3333; --purple:#a855f7;
+  --text:#b8d8ee; --td:#4a7a9b; --tb:#ffffff;
+  --glow:rgba(0,200,255,0.12); --glow2:rgba(0,200,255,0.25);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+
+/* ══════════════════════════════════════
+GLOBAL BACKGROUND
+══════════════════════════════════════ */
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
+.vignette{position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(4,13,22,0.8) 100%);pointer-events:none;z-index:1}
+
+/* ══════════════════════════════════════
+LOGIN PAGE
+══════════════════════════════════════ */
+#loginPage{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:var(–bg)}
+#loginPage::before{content:’’;position:absolute;inset:0;background-image:linear-gradient(rgba(0,200,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.03) 1px,transparent 1px);background-size:44px 44px}
+
+.login-wrap{position:relative;z-index:10;width:100%;max-width:440px;padding:0 20px;animation:fadeUp .6s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+
+.login-logo{text-align:center;margin-bottom:36px}
+.login-radar-icon{display:inline-block;margin-bottom:16px;position:relative}
+.login-radar-icon svg{width:80px;height:80px}
+.login-logo h1{font-size:24px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:4px}
+.login-logo p{font-size:11px;font-family:‘Share Tech Mono’,monospace;color:var(–accent);letter-spacing:3px}
+
+.login-card{background:rgba(7,24,40,0.9);border:1px solid var(–border2);border-radius:12px;padding:36px;backdrop-filter:blur(20px);box-shadow:0 0 60px rgba(0,200,255,0.1),0 0 0 1px rgba(0,200,255,0.05) inset}
+
+.login-section-title{font-size:12px;font-family:‘Share Tech Mono’,monospace;color:var(–accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.login-title{font-size:22px;font-weight:900;color:#fff;margin-bottom:28px}
+
+.form-group{margin-bottom:20px;position:relative}
+.form-label{display:block;font-size:12px;color:var(–td);margin-bottom:8px;letter-spacing:.5px}
+.form-input{width:100%;background:rgba(4,13,22,0.8);border:1px solid var(–border);color:#fff;padding:13px 16px;border-radius:6px;font-family:‘Tajawal’,sans-serif;font-size:15px;outline:none;transition:all .3s}
+.form-input:focus{border-color:var(–accent);box-shadow:0 0 0 3px rgba(0,200,255,0.1);background:rgba(4,13,22,1)}
+.form-input::placeholder{color:var(–td)}
+
+.login-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(–accent),var(–a3));color:#000;border:none;border-radius:6px;font-family:‘Tajawal’,sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:all .2s;margin-top:8px;letter-spacing:.5px}
+.login-btn:hover{box-shadow:0 0 30px rgba(0,200,255,0.5);transform:translateY(-1px)}
+.login-btn:active{transform:none}
+
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+
+.login-error{background:rgba(255,51,51,0.1);border:1px solid rgba(255,51,51,0.3);color:var(–danger);padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:16px;display:none}
+.login-error.show{display:block}
+
+.login-decorations{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.ldot{position:absolute;border-radius:50%;background:var(–accent);opacity:.15;animation:ldotAnim 4s ease-in-out infinite}
+@keyframes ldotAnim{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+
+/* ══════════════════════════════════════
+APP SHELL
+══════════════════════════════════════ */
+#appShell{position:fixed;inset:0;z-index:100;display:none;flex-direction:column}
+#appShell.visible{display:flex}
+
+/* TOP BAR */
+.topbar{height:56px;background:rgba(4,13,22,.97);border-bottom:1px solid var(–border);display:flex;align-items:center;padding:0 24px;gap:16px;position:relative;z-index:200;flex-shrink:0}
+.topbar-logo{display:flex;align-items:center;gap:10px;margin-left:20px}
+.topbar-logo svg{width:32px;height:32px}
+.topbar-logo .tl-text h1{font-size:15px;font-weight:900;color:#fff;line-height:1.1}
+.topbar-logo .tl-text span{font-size:9px;font-family:‘Share Tech Mono’,monospace;color:var(–accent);letter-spacing:2px}
+
+.ticker-wrap{flex:1;overflow:hidden;border:1px solid var(–border);border-radius:4px;padding:4px 12px;background:rgba(0,200,255,.03)}
+.ticker{display:flex;align-items:center;gap:8px;font-family:‘Share Tech Mono’,monospace;font-size:11px;color:rgba(0,200,255,.5);white-space:nowrap;animation:tickScroll 40s linear infinite}
+@keyframes tickScroll{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.ticker-dot{width:5px;height:5px;border-radius:50%;background:var(–a2);animation:blink 2s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.topbar-right{display:flex;align-items:center;gap:14px;margin-right:auto}
+.topbar-stat{text-align:center;min-width:40px}
+.ts-v{font-family:‘Share Tech Mono’,monospace;font-size:18px;font-weight:bold;line-height:1}
+.ts-l{font-size:9px;color:var(–td);letter-spacing:1px;margin-top:1px}
+.ts-crit .ts-v{color:var(–danger);text-shadow:0 0 8px rgba(255,51,51,.6)}
+.ts-warn .ts-v{color:var(–warn);text-shadow:0 0 8px rgba(255,153,0,.5)}
+.ts-ok .ts-v{color:var(–a2);text-shadow:0 0 8px rgba(0,255,157,.4)}
+.ts-blue .ts-v{color:var(–accent);text-shadow:0 0 8px rgba(0,200,255,.4)}
+.topbar-divider{width:1px;height:30px;background:var(–border)}
+.topbar-clock{font-family:‘Share Tech Mono’,monospace;font-size:15px;color:var(–accent);letter-spacing:1px}
+.topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:6px;border:1px solid var(–border);transition:all .2s;position:relative}
+.topbar-user:hover{border-color:var(–border2);background:rgba(0,200,255,.05)}
+.tu-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.tu-name{font-size:13px;color:#fff;font-weight:600}
+.tu-role{font-size:10px;color:var(–td)}
+.user-dropdown{position:absolute;top:calc(100% + 8px);left:0;background:var(–surface);border:1px solid var(–border2);border-radius:8px;min-width:160px;overflow:hidden;display:none;z-index:999;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.user-dropdown.open{display:block}
+.ud-item{padding:10px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s;color:var(–text)}
+.ud-item:hover{background:var(–s2);color:#fff}
+.ud-divider{height:1px;background:var(–border)}
+.ud-item.danger{color:var(–danger)}
+.ud-item.danger:hover{background:rgba(255,51,51,.1)}
+
+/* MAIN LAYOUT */
+.app-body{flex:1;display:flex;overflow:hidden}
+
+/* SIDE NAV */
+.sidenav{width:200px;background:rgba(6,18,32,.97);border-left:1px solid var(–border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;position:relative;z-index:10}
+.nav-s{padding:14px 12px 4px;font-size:9px;color:var(–td);font-family:‘Share Tech Mono’,monospace;letter-spacing:2px;text-transform:uppercase}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;border-radius:5px;margin:1px 6px;font-size:13.5px;color:var(–td);transition:all .2s;border:1px solid transparent;position:relative}
+.ni:hover{background:rgba(0,200,255,.05);color:var(–text);border-color:var(–border)}
+.ni.active{background:rgba(0,200,255,.1);color:var(–accent);border-color:rgba(0,200,255,.25)}
+.ni .ico{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.ni-badge{margin-right:auto;font-size:10px;font-family:‘Share Tech Mono’,monospace;padding:1px 6px;border-radius:8px}
+.ni-badge.red{background:rgba(255,51,51,.2);color:var(–danger);border:1px solid rgba(255,51,51,.3)}
+.ni-badge.yellow{background:rgba(255,153,0,.15);color:var(–warn);border:1px solid rgba(255,153,0,.25)}
+.ni-badge.green{background:rgba(0,255,157,.1);color:var(–a2);border:1px solid rgba(0,255,157,.2)}
+.nav-div{height:1px;background:var(–border);margin:6px 14px}
+.sidenav-bottom{margin-top:auto;padding:12px 6px;border-top:1px solid var(–border)}
+
+/* MAIN CONTENT */
+.main-content{flex:1;overflow-y:auto;position:relative;z-index:5}
+.page{display:none;padding:24px;min-height:100%;flex-direction:column;gap:20px}
+.page.active{display:flex}
+
+/* PAGE HEADER */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.ph-title h2{font-size:22px;font-weight:900;color:#fff;line-height:1.1}
+.ph-title p{font-size:11px;font-family:‘Share Tech Mono’,monospace;color:var(–td);margin-top:3px;letter-spacing:1px}
+.ph-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:5px;border:none;cursor:pointer;font-family:‘Tajawal’,sans-serif;font-size:14px;font-weight:700;transition:all .2s;white-space:nowrap;text-decoration:none}
+.btn-accent{background:var(–accent);color:#000}.btn-accent:hover{background:#fff;box-shadow:0 0 25px rgba(0,200,255,.5)}
+.btn-ghost{background:none;border:1px solid var(–border);color:var(–td)}.btn-ghost:hover{border-color:var(–accent);color:var(–accent);background:rgba(0,200,255,.05)}
+.btn-danger{background:rgba(255,51,51,.12);color:var(–danger);border:1px solid rgba(255,51,51,.25)}.btn-danger:hover{background:var(–danger);color:#fff}
+.btn-warn{background:rgba(255,153,0,.12);color:var(–warn);border:1px solid rgba(255,153,0,.25)}.btn-warn:hover{background:var(–warn);color:#000}
+.btn-ok{background:rgba(0,255,157,.08);color:var(–a2);border:1px solid rgba(0,255,157,.2)}.btn-ok:hover{background:var(–a2);color:#000}
+.btn-purple{background:rgba(168,85,247,.12);color:var(–purple);border:1px solid rgba(168,85,247,.25)}.btn-purple:hover{background:var(–purple);color:#fff}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-xs{padding:3px 9px;font-size:11px}
+
+/* CONTROLS ROW */
+.cr{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sw{position:relative;flex:1;min-width:180px}
+.sw input{width:100%;background:var(–surface);border:1px solid var(–border);color:var(–text);padding:8px 12px 8px 36px;border-radius:5px;font-family:‘Tajawal’,sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.sw input:focus{border-color:var(–accent)}
+.sw::before{content:‘⌕’;position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(–td);font-size:16px}
+.sel{background:var(–surface);border:1px solid var(–border);color:var(–text);padding:8px 10px;border-radius:5px;font-family:‘Tajawal’,sans-serif;font-size:13px;outline:none;cursor:pointer}
+
+/* CARDS */
+.cards-row{display:grid;gap:14px}
+.cards-4{grid-template-columns:repeat(4,1fr)}
+.cards-3{grid-template-columns:repeat(3,1fr)}
+.cards-2{grid-template-columns:repeat(2,1fr)}
+.stat-card{background:var(–surface);border:1px solid var(–border);border-radius:8px;padding:18px;position:relative;overflow:hidden;transition:border-color .2s}
+.stat-card:hover{border-color:var(–border2)}
+.stat-card::after{content:’’;position:absolute;bottom:0;left:0;right:0;height:2px}
+.sc-red::after{background:linear-gradient(90deg,var(–danger),transparent)}
+.sc-yellow::after{background:linear-gradient(90deg,var(–warn),transparent)}
+.sc-green::after{background:linear-gradient(90deg,var(–a2),transparent)}
+.sc-blue::after{background:linear-gradient(90deg,var(–accent),transparent)}
+.sc-val{font-family:‘Share Tech Mono’,monospace;font-size:38px;font-weight:bold;line-height:1;margin-bottom:4px}
+.sc-label{font-size:13px;color:var(–td)}
+.sc-icon{position:absolute;top:14px;left:16px;font-size:26px;opacity:.12}
+.sc-red .sc-val{color:var(–danger)}.sc-yellow .sc-val{color:var(–warn)}.sc-green .sc-val{color:var(–a2)}.sc-blue .sc-val{color:var(–accent)}
+.sc-change{font-size:11px;font-family:‘Share Tech Mono’,monospace;color:var(–td);margin-top:4px}
+
+/* TABLE */
+.tw{background:var(–surface);border:1px solid var(–border);border-radius:8px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead tr{background:rgba(13,51,82,.5);border-bottom:1px solid var(–border)}
+th{padding:11px 14px;font-size:10px;font-weight:700;color:var(–td);text-align:right;letter-spacing:1px;font-family:‘Share Tech Mono’,monospace;white-space:nowrap}
+tbody tr{border-bottom:1px solid rgba(13,51,82,.4);transition:background .15s;animation:rowAnim .3s ease both}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(0,200,255,.03)}
+@keyframes rowAnim{from{opacity:0;transform:translateX(5px)}to{opacity:1;transform:none}}
+td{padding:11px 14px;font-size:13px;vertical-align:middle}
+.td-mono{font-family:‘Share Tech Mono’,monospace;font-size:11px;color:var(–td)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px;white-space:nowrap}
+.badge::before{content:’’;width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.b-crit{background:rgba(255,51,51,.1);color:var(–danger);border:1px solid rgba(255,51,51,.25)}.b-crit::before{background:var(–danger);animation:blink 1.2s infinite;box-shadow:0 0 5px var(–danger)}
+.b-warn{background:rgba(255,153,0,.1);color:var(–warn);border:1px solid rgba(255,153,0,.25)}.b-warn::before{background:var(–warn)}
+.b-info{background:rgba(0,200,255,.08);color:var(–accent);border:1px solid rgba(0,200,255,.2)}.b-info::before{background:var(–accent)}
+.b-ok{background:rgba(0,255,157,.07);color:var(–a2);border:1px solid rgba(0,255,157,.18)}.b-ok::before{background:var(–a2);box-shadow:0 0 5px var(–a2)}
+.b-open{background:rgba(255,153,0,.08);color:var(–warn);border:1px solid rgba(255,153,0,.2)}.b-open::before{background:var(–warn)}
+.b-resolved{background:rgba(0,255,157,.07);color:var(–a2);border:1px solid rgba(0,255,157,.18)}.b-resolved::before{background:var(–a2)}
+.b-admin{background:rgba(168,85,247,.1);color:var(–purple);border:1px solid rgba(168,85,247,.25)}.b-admin::before{background:var(–purple)}
+.b-tech{background:rgba(0,200,255,.08);color:var(–accent);border:1px solid rgba(0,200,255,.2)}.b-tech::before{background:var(–accent)}
+.b-viewer{background:rgba(74,122,155,.15);color:var(–td);border:1px solid var(–border)}.b-viewer::before{background:var(–td)}
+.b-online{background:rgba(0,255,157,.07);color:var(–a2);border:1px solid rgba(0,255,157,.18)}.b-online::before{background:var(–a2);box-shadow:0 0 5px var(–a2)}
+.b-fault{background:rgba(255,51,51,.1);color:var(–danger);border:1px solid rgba(255,51,51,.25)}.b-fault::before{background:var(–danger);animation:blink 1s infinite}
+.b-maint{background:rgba(255,153,0,.1);color:var(–warn);border:1px solid rgba(255,153,0,.25)}.b-maint::before{background:var(–warn)}
+.b-offline{background:rgba(74,122,155,.15);color:var(–td);border:1px solid var(–border)}.b-offline::before{background:var(–td)}
+
+/* RADAR CARDS */
+.radar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.rc{background:var(–surface);border:1px solid var(–border);border-radius:10px;overflow:hidden;transition:all .2s;animation:rowAnim .3s ease both;position:relative}
+.rc:hover{border-color:var(–border2);box-shadow:0 0 20px var(–glow)}
+.rc-bar{height:3px;width:100%}
+.rc.online .rc-bar{background:linear-gradient(90deg,var(–a2),transparent)}
+.rc.fault .rc-bar{background:linear-gradient(90deg,var(–danger),transparent);animation:pulse-bar 1.5s infinite}
+@keyframes pulse-bar{0%,100%{opacity:1}50%{opacity:.4}}
+.rc.maintenance .rc-bar{background:linear-gradient(90deg,var(–warn),transparent)}
+.rc.offline .rc-bar{background:linear-gradient(90deg,var(–td),transparent)}
+.rc-body{padding:16px}
+.rc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.rc-id{font-family:‘Share Tech Mono’,monospace;font-size:16px;font-weight:bold;color:#fff}
+.rc-name{font-size:13px;color:var(–td);margin-bottom:12px}
+.rc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px}
+.rcs{background:var(–s2);border-radius:5px;padding:7px 10px;text-align:center}
+.rcs-v{font-family:‘Share Tech Mono’,monospace;font-size:14px;font-weight:bold;color:#fff}
+.rcs-l{font-size:10px;color:var(–td);margin-top:2px}
+.rc-progress{margin-bottom:12px}
+.rcp-label{display:flex;justify-content:space-between;font-size:11px;color:var(–td);margin-bottom:5px}
+.rcp-bar{height:5px;background:var(–s3);border-radius:3px;overflow:hidden}
+.rcp-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.rc-footer{display:flex;gap:6px;padding-top:12px;border-top:1px solid var(–border)}
+
+/* GAUGE */
+.gauge-wrap{display:flex;justify-content:center;margin-bottom:10px}
+.gauge{position:relative;width:90px;height:50px;overflow:hidden}
+.gauge svg{width:90px;height:90px}
+
+/* ACTIVITY */
+.activity-item{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid rgba(13,51,82,.4);animation:rowAnim .3s ease both}
+.activity-item:last-child{border-bottom:none}
+.ai-icon{font-size:16px;width:22px;flex-shrink:0;text-align:center;margin-top:1px}
+.ai-text{flex:1;font-size:13px;color:var(–text);line-height:1.5}
+.ai-user{color:var(–accent);font-weight:700}
+.ai-time{font-family:‘Share Tech Mono’,monospace;font-size:11px;color:var(–td);margin-top:2px}
+
+/* AVATAR */
+.avatar{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;border:2px solid}
+.av-a{background:rgba(168,85,247,.18);border-color:var(–purple);color:var(–purple)}
+.av-t{background:rgba(0,200,255,.12);border-color:var(–accent);color:var(–accent)}
+.av-v{background:rgba(74,122,155,.18);border-color:var(–td);color:var(–td)}
+.member-cell{display:flex;align-items:center;gap:10px}
+.mc-name{font-weight:700;color:#fff;font-size:13px}
+.mc-email{font-size:11px;color:var(–td);font-family:‘Share Tech Mono’,monospace;margin-top:1px}
+
+/* READINESS METERS */
+.readiness-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.ready-card{background:var(–surface);border:1px solid var(–border);border-radius:8px;padding:16px;text-align:center;position:relative;overflow:hidden;transition:all .2s}
+.ready-card:hover{border-color:var(–border2)}
+.ready-ring{width:90px;height:90px;margin:0 auto 12px;position:relative}
+.ready-ring svg{transform:rotate(-90deg)}
+.ready-ring .bg-circle{stroke:var(–s3);stroke-width:6;fill:none}
+.ready-ring .fg-circle{stroke-width:6;fill:none;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.ready-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:‘Share Tech Mono’,monospace;font-size:16px;font-weight:bold}
+.ready-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:3px}
+.ready-loc{font-size:11px;color:var(–td)}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(4,13,22,.93);z-index:800;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+.mo.open{display:flex}
+.modal{background:var(–s2);border:1px solid var(–border2);border-radius:10px;width:96%;max-width:660px;max-height:92vh;overflow-y:auto;box-shadow:0 0 60px rgba(0,200,255,.2);animation:mIn .3s ease}
+.modal-lg{max-width:820px}
+@keyframes mIn{from{opacity:0;transform:scale(.95) translateY(-15px)}to{opacity:1;transform:none}}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(–border)}
+.mh h3{font-size:16px;font-weight:700;color:var(–accent);display:flex;align-items:center;gap:8px}
+.mx{background:none;border:none;color:var(–td);font-size:20px;cursor:pointer;padding:3px 6px;border-radius:3px;line-height:1;transition:color .2s}
+.mx:hover{color:#fff}
+.mb{padding:22px}
+.mf{display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid var(–border)}
+
+/* FORM */
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:11px;color:var(–td);margin-bottom:6px;letter-spacing:.5px}
+.fi,.fs,.ft{width:100%;background:var(–bg);border:1px solid var(–border);color:var(–text);padding:9px 12px;border-radius:5px;font-family:‘Tajawal’,sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(–accent)}
+.ft{min-height:85px;resize:vertical}
+.fi::placeholder{color:var(–td)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* CONFIRM */
+.confirm-card{max-width:440px}
+.confirm-body{padding:30px 24px;text-align:center}
+.confirm-icon{font-size:48px;margin-bottom:14px}
+.confirm-msg{font-size:17px;font-weight:900;color:#fff;margin-bottom:6px}
+.confirm-sub{font-size:13px;color:var(–td)}
+
+/* SETTINGS */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sc{background:var(–surface);border:1px solid var(–border);border-radius:8px;padding:20px}
+.sc-title{font-size:12px;font-weight:700;color:#fff;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(–border);display:flex;align-items:center;gap:8px;letter-spacing:.5px}
+.tr{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(13,51,82,.35)}
+.tr:last-child{border-bottom:none}
+.tr-l{font-size:13px;color:var(–text)}
+.toggle{width:38px;height:20px;background:var(–border2);border-radius:20px;cursor:pointer;position:relative;border:none;transition:background .2s;flex-shrink:0}
+.toggle::after{content:’’;position:absolute;top:3px;right:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle.on{background:var(–accent)}.toggle.on::after{transform:translateX(-18px)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(–s2);border:1px solid var(–accent);color:var(–accent);padding:11px 22px;border-radius:7px;font-size:14px;z-index:9999;transition:transform .3s;box-shadow:0 0 30px rgba(0,200,255,.25);white-space:nowrap;font-weight:600}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.danger{border-color:var(–danger);color:var(–danger);box-shadow:0 0 30px rgba(255,51,51,.2)}
+.toast.ok{border-color:var(–a2);color:var(–a2);box-shadow:0 0 30px rgba(0,255,157,.2)}
+.toast.warn{border-color:var(–warn);color:var(–warn)}
+
+/* PROFILE MODAL */
+.profile-grid{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:start}
+.profile-avatar-big{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;margin:0 auto 12px}
+.profile-avatar-wrap{text-align:center}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;color:var(–td)}
+.empty .ei{font-size:40px;opacity:.25;margin-bottom:10px}
+.empty p{font-size:14px}
+
+/* DETAIL BLOCK */
+.db{background:var(–bg);border:1px solid var(–border);border-radius:6px;padding:14px;margin-bottom:14px}
+.dkv{display:flex;gap:8px;margin-bottom:7px;font-size:13px;align-items:flex-start}
+.dkv:last-child{margin-bottom:0}
+.dk{color:var(–td);min-width:120px;flex-shrink:0}
+.dv{color:#fff;font-weight:600;flex:1;line-height:1.5}
+.tl-item{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid rgba(13,51,82,.35);font-size:13px}
+.tl-item:last-child{border-bottom:none}
+.tl-t{font-family:‘Share Tech Mono’,monospace;color:var(–td);font-size:11px;min-width:85px;padding-top:1px}
+.tl-e{color:var(–text)}
+
+/* SECTION LABEL */
+.sec-label{font-size:11px;font-family:‘Share Tech Mono’,monospace;color:var(–accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(–border)}
+
+/* HORIZONTAL DIVIDER */
+.hdiv{height:1px;background:var(–border);margin:4px 0}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(–bg)}
+::-webkit-scrollbar-thumb{background:var(–border2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(–accent)}
+
+/* FAULT PRIORITY INDICATOR */
+.fp-indicator{display:flex;align-items:center;gap:6px;font-size:12px}
+.fp-bar{display:flex;gap:2px}
+.fp-seg{width:8px;height:12px;border-radius:1px;background:var(–border2)}
+.fp-seg.active-crit{background:var(–danger)}
+.fp-seg.active-warn{background:var(–warn)}
+.fp-seg.active-info{background:var(–accent)}
+
+/* ONLINE STATUS PULSE */
+.status-pulse{display:inline-flex;align-items:center;gap:6px}
+.sp-dot{width:8px;height:8px;border-radius:50%;position:relative}
+.sp-dot.online{background:var(–a2);box-shadow:0 0 8px rgba(0,255,157,.7)}
+.sp-dot.online::after{content:’’;position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(0,255,157,.3);animation:ripple 2s infinite}
+.sp-dot.fault{background:var(–danger);animation:blink 1s infinite}
+.sp-dot.maintenance{background:var(–warn)}
+.sp-dot.offline{background:var(–td)}
+@keyframes ripple{to{transform:scale(2);opacity:0}}
+
+/* PROGRESS BAR */
+.prog-bar{height:6px;background:var(–s3);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;transition:width 1s ease}
+
+/* NOTIFICATION BELL */
+.notif-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(–border);background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(–td);transition:all .2s;position:relative}
+.notif-btn:hover{border-color:var(–accent);color:var(–accent)}
+.notif-badge{position:absolute;top:-3px;left:-3px;width:14px;height:14px;background:var(–danger);border-radius:50%;font-size:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-family:‘Share Tech Mono’,monospace;font-weight:bold;border:2px solid var(–bg)}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sh-title{font-size:11px;font-family:‘Share Tech Mono’,monospace;color:var(–accent);letter-spacing:2px;text-transform:uppercase}
+
+/* CHART MINI */
+.mini-chart{display:flex;flex-direction:column;gap:8px}
+.mch-row{display:flex;align-items:center;gap:10px}
+.mch-label{font-size:11px;color:var(–td);min-width:90px;text-align:right}
+.mch-bar-wrap{flex:1;height:10px;background:var(–s3);border-radius:2px;overflow:hidden}
+.mch-bar{height:100%;border-radius:2px;transition:width 1s ease}
+.mch-val{font-family:‘Share Tech Mono’,monospace;font-size:11px;color:var(–td);min-width:20px;text-align:left}
+
+/* UPTIME DISPLAY */
+.uptime-display{font-family:‘Share Tech Mono’,monospace;font-size:28px;color:var(–accent);text-align:center;letter-spacing:3px;margin:10px 0}
+.uptime-label{text-align:center;font-size:11px;color:var(–td);letter-spacing:1px}
+
+/* TWO-COLUMN LAYOUT */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* NOTIFICATION PANEL */
+.notif-panel{position:absolute;top:calc(100% + 8px);left:0;width:320px;background:var(–surface);border:1px solid var(–border2);border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:999;display:none;overflow:hidden}
+.notif-panel.open{display:block}
+.np-header{padding:12px 16px;border-bottom:1px solid var(–border);display:flex;justify-content:space-between;align-items:center}
+.np-header h4{font-size:13px;font-weight:700;color:#fff}
+.np-item{display:flex;gap:10px;padding:11px 16px;border-bottom:1px solid rgba(13,51,82,.4);cursor:pointer;transition:background .15s}
+.np-item:hover{background:var(–s2)}
+.np-item:last-child{border-bottom:none}
+.np-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.np-text{font-size:12px;color:var(–text);line-height:1.5;flex:1}
+.np-time{font-size:10px;color:var(–td);font-family:‘Share Tech Mono’,monospace;margin-top:2px}
+.np-unread{background:rgba(0,200,255,.04)}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+.cards-4{grid-template-columns:1fr 1fr}
+.sg{grid-template-columns:1fr}
+.two-col,.three-col{grid-template-columns:1fr}
+.sidenav{width:56px}
+.ni span:not(.ico){display:none}
+.ni-badge{display:none}
+.nav-s{display:none}
 }
-
-/* Grid background */
-body::before {
-content: ‘’;
-position: fixed;
-inset: 0;
-background-image:
-linear-gradient(rgba(0,200,255,0.03) 1px, transparent 1px),
-linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px);
-background-size: 40px 40px;
-pointer-events: none;
-z-index: 0;
-}
-
-/* Radar sweep animation */
-.radar-bg {
-position: fixed;
-top: -200px;
-left: -200px;
-width: 500px;
-height: 500px;
-border-radius: 50%;
-border: 1px solid rgba(0,200,255,0.05);
-pointer-events: none;
-z-index: 0;
-opacity: 0.5;
-}
-.radar-bg::before {
-content: ‘’;
-position: absolute;
-inset: 40px;
-border-radius: 50%;
-border: 1px solid rgba(0,200,255,0.05);
-}
-.radar-bg::after {
-content: ‘’;
-position: absolute;
-inset: 100px;
-border-radius: 50%;
-border: 1px solid rgba(0,200,255,0.05);
-}
-
-.sweep {
-position: fixed;
-top: -200px;
-left: -200px;
-width: 500px;
-height: 500px;
-pointer-events: none;
-z-index: 0;
-animation: sweep 8s linear infinite;
-}
-.sweep::after {
-content: ‘’;
-position: absolute;
-top: 50%;
-left: 50%;
-width: 250px;
-height: 1px;
-background: linear-gradient(90deg, transparent, rgba(0,200,255,0.4));
-transform-origin: 0 50%;
-}
-@keyframes sweep {
-from { transform: rotate(0deg); }
-to { transform: rotate(360deg); }
-}
-
-/* Header */
-header {
-position: relative;
-z-index: 10;
-border-bottom: 1px solid var(–border);
-padding: 0 40px;
-background: linear-gradient(180deg, rgba(5,14,24,0.95) 0%, transparent 100%);
-}
-
-.header-top {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 20px 0 16px;
-border-bottom: 1px solid rgba(13,51,82,0.5);
-}
-
-.logo {
-display: flex;
-align-items: center;
-gap: 14px;
-}
-
-.logo-icon {
-width: 48px;
-height: 48px;
-position: relative;
-}
-
-.logo-icon svg {
-width: 100%;
-height: 100%;
-}
-
-.logo-text h1 {
-font-size: 20px;
-font-weight: 900;
-letter-spacing: 0.5px;
-color: #fff;
-line-height: 1.2;
-}
-
-.logo-text span {
-font-size: 12px;
-color: var(–accent);
-font-weight: 400;
-font-family: ‘Share Tech Mono’, monospace;
-letter-spacing: 2px;
-}
-
-.header-stats {
-display: flex;
-gap: 30px;
-}
-
-.stat-item {
-text-align: center;
-}
-
-.stat-value {
-font-family: ‘Share Tech Mono’, monospace;
-font-size: 22px;
-font-weight: bold;
-line-height: 1;
-}
-
-.stat-label {
-font-size: 11px;
-color: var(–text-dim);
-margin-top: 3px;
-letter-spacing: 1px;
-}
-
-.stat-item.critical .stat-value { color: var(–danger); text-shadow: 0 0 10px rgba(255,51,51,0.5); }
-.stat-item.warning .stat-value { color: var(–warn); text-shadow: 0 0 10px rgba(255,153,0,0.5); }
-.stat-item.ok .stat-value { color: var(–accent2); text-shadow: 0 0 10px rgba(0,255,157,0.5); }
-
-.status-bar {
-display: flex;
-align-items: center;
-gap: 8px;
-padding: 10px 0;
-font-family: ‘Share Tech Mono’, monospace;
-font-size: 11px;
-color: var(–text-dim);
-overflow: hidden;
-}
-
-.status-dot {
-width: 6px;
-height: 6px;
-border-radius: 50%;
-background: var(–accent2);
-animation: blink 2s infinite;
-flex-shrink: 0;
-}
-
-@keyframes blink {
-0%,100% { opacity: 1; }
-50% { opacity: 0.2; }
-}
-
-.status-scroll {
-white-space: nowrap;
-animation: scroll-text 30s linear infinite;
-color: rgba(0,200,255,0.5);
-}
-
-@keyframes scroll-text {
-from { transform: translateX(-100%); }
-to { transform: translateX(100vw); }
-}
-
-/* Nav */
-nav {
-display: flex;
-align-items: center;
-gap: 4px;
-padding: 12px 0;
-}
-
-.nav-btn {
-background: none;
-border: 1px solid transparent;
-color: var(–text-dim);
-padding: 6px 16px;
-border-radius: 4px;
-cursor: pointer;
-font-family: ‘Tajawal’, sans-serif;
-font-size: 14px;
-transition: all 0.2s;
-}
-
-.nav-btn:hover, .nav-btn.active {
-border-color: var(–accent);
-color: var(–accent);
-background: rgba(0,200,255,0.05);
-}
-
-/* Main layout */
-.container {
-max-width: 1400px;
-margin: 0 auto;
-padding: 30px 40px;
-position: relative;
-z-index: 5;
-}
-
-/* Controls bar */
-.controls {
-display: flex;
-align-items: center;
-gap: 16px;
-margin-bottom: 24px;
-flex-wrap: wrap;
-}
-
-.btn-primary {
-background: var(–accent);
-color: #000;
-border: none;
-padding: 10px 22px;
-border-radius: 4px;
-cursor: pointer;
-font-family: ‘Tajawal’, sans-serif;
-font-size: 15px;
-font-weight: 700;
-transition: all 0.2s;
-display: flex;
-align-items: center;
-gap: 8px;
-}
-
-.btn-primary:hover {
-background: #fff;
-box-shadow: 0 0 20px rgba(0,200,255,0.4);
-}
-
-.search-box {
-flex: 1;
-position: relative;
-}
-
-.search-box input {
-width: 100%;
-background: var(–surface);
-border: 1px solid var(–border);
-color: var(–text);
-padding: 10px 16px 10px 40px;
-border-radius: 4px;
-font-family: ‘Tajawal’, sans-serif;
-font-size: 14px;
-outline: none;
-transition: border-color 0.2s;
-}
-
-.search-box input:focus { border-color: var(–accent); }
-
-.search-box::before {
-content: ‘⌕’;
-position: absolute;
-left: 12px;
-top: 50%;
-transform: translateY(-50%);
-color: var(–text-dim);
-font-size: 18px;
-}
-
-.filter-select {
-background: var(–surface);
-border: 1px solid var(–border);
-color: var(–text);
-padding: 10px 14px;
-border-radius: 4px;
-font-family: ‘Tajawal’, sans-serif;
-font-size: 14px;
-outline: none;
-cursor: pointer;
-}
-
-/* Fault cards */
-.faults-grid {
-display: grid;
-gap: 16px;
-}
-
-.fault-card {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 8px;
-padding: 20px;
-display: grid;
-grid-template-columns: auto 1fr auto;
-gap: 20px;
-align-items: start;
-transition: all 0.2s;
-position: relative;
-overflow: hidden;
-animation: fadeIn 0.4s ease both;
-}
-
-@keyframes fadeIn {
-from { opacity: 0; transform: translateY(10px); }
-to { opacity: 1; transform: translateY(0); }
-}
-
-.fault-card::before {
-content: ‘’;
-position: absolute;
-top: 0; right: 0;
-width: 3px;
-height: 100%;
-}
-
-.fault-card.critical::before { background: var(–danger); }
-.fault-card.warning::before { background: var(–warn); }
-.fault-card.info::before { background: var(–accent); }
-.fault-card.resolved::before { background: var(–accent2); }
-
-.fault-card:hover {
-border-color: var(–accent);
-background: var(–surface2);
-box-shadow: 0 0 20px var(–glow);
-}
-
-.fault-id-col {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 8px;
-min-width: 80px;
-}
-
-.fault-id {
-font-family: ‘Share Tech Mono’, monospace;
-font-size: 12px;
-color: var(–text-dim);
-}
-
-.severity-badge {
-padding: 4px 10px;
-border-radius: 3px;
-font-size: 11px;
-font-weight: 700;
-letter-spacing: 1px;
-white-space: nowrap;
-}
-
-.badge-critical { background: rgba(255,51,51,0.15); color: var(–danger); border: 1px solid rgba(255,51,51,0.3); }
-.badge-warning { background: rgba(255,153,0,0.15); color: var(–warn); border: 1px solid rgba(255,153,0,0.3); }
-.badge-info { background: rgba(0,200,255,0.15); color: var(–accent); border: 1px solid rgba(0,200,255,0.3); }
-.badge-resolved { background: rgba(0,255,157,0.1); color: var(–accent2); border: 1px solid rgba(0,255,157,0.2); }
-
-.fault-body { min-width: 0; }
-
-.fault-title {
-font-size: 17px;
-font-weight: 700;
-color: #fff;
-margin-bottom: 6px;
-}
-
-.fault-meta {
-display: flex;
-flex-wrap: wrap;
-gap: 16px;
-margin-bottom: 10px;
-font-size: 12px;
-color: var(–text-dim);
-font-family: ‘Share Tech Mono’, monospace;
-}
-
-.fault-meta span { display: flex; align-items: center; gap: 4px; }
-
-.fault-desc {
-font-size: 14px;
-color: var(–text);
-line-height: 1.7;
-opacity: 0.85;
-}
-
-.fault-tags {
-display: flex;
-flex-wrap: wrap;
-gap: 6px;
-margin-top: 12px;
-}
-
-.tag {
-background: rgba(13,51,82,0.6);
-border: 1px solid var(–border);
-padding: 2px 10px;
-border-radius: 20px;
-font-size: 11px;
-color: var(–text-dim);
-}
-
-.fault-actions {
-display: flex;
-flex-direction: column;
-gap: 8px;
-min-width: 100px;
-}
-
-.btn-small {
-background: none;
-border: 1px solid var(–border);
-color: var(–text-dim);
-padding: 6px 12px;
-border-radius: 4px;
-cursor: pointer;
-font-family: ‘Tajawal’, sans-serif;
-font-size: 12px;
-transition: all 0.2s;
-text-align: center;
-}
-
-.btn-small:hover { border-color: var(–accent); color: var(–accent); }
-
-/* Modal */
-.modal-overlay {
-display: none;
-position: fixed;
-inset: 0;
-background: rgba(5,14,24,0.92);
-z-index: 100;
-align-items: center;
-justify-content: center;
-backdrop-filter: blur(4px);
-}
-
-.modal-overlay.open { display: flex; }
-
-.modal {
-background: var(–surface);
-border: 1px solid var(–accent);
-border-radius: 10px;
-width: 95%;
-max-width: 700px;
-max-height: 90vh;
-overflow-y: auto;
-box-shadow: 0 0 60px rgba(0,200,255,0.2);
-animation: modalIn 0.3s ease;
-}
-
-@keyframes modalIn {
-from { opacity: 0; transform: scale(0.95) translateY(-20px); }
-to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.modal-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 20px 24px;
-border-bottom: 1px solid var(–border);
-}
-
-.modal-title {
-font-size: 18px;
-font-weight: 700;
-color: var(–accent);
-display: flex;
-align-items: center;
-gap: 10px;
-}
-
-.modal-close {
-background: none;
-border: none;
-color: var(–text-dim);
-font-size: 22px;
-cursor: pointer;
-line-height: 1;
-padding: 4px;
-}
-
-.modal-close:hover { color: #fff; }
-
-.modal-body { padding: 24px; }
-
-.form-group {
-margin-bottom: 20px;
-}
-
-.form-label {
-display: block;
-font-size: 13px;
-color: var(–text-dim);
-margin-bottom: 8px;
-letter-spacing: 0.5px;
-}
-
-.form-input, .form-select, .form-textarea {
-width: 100%;
-background: var(–bg);
-border: 1px solid var(–border);
-color: var(–text);
-padding: 10px 14px;
-border-radius: 4px;
-font-family: ‘Tajawal’, sans-serif;
-font-size: 14px;
-outline: none;
-transition: border-color 0.2s;
-}
-
-.form-input:focus, .form-select:focus, .form-textarea:focus {
-border-color: var(–accent);
-}
-
-.form-textarea { min-height: 100px; resize: vertical; }
-
-.form-row {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 16px;
-}
-
-.modal-footer {
-display: flex;
-justify-content: flex-end;
-gap: 12px;
-padding: 16px 24px;
-border-top: 1px solid var(–border);
-}
-
-.btn-cancel {
-background: none;
-border: 1px solid var(–border);
-color: var(–text-dim);
-padding: 10px 22px;
-border-radius: 4px;
-cursor: pointer;
-font-family: ‘Tajawal’, sans-serif;
-font-size: 15px;
-}
-
-.btn-cancel:hover { border-color: #fff; color: #fff; }
-
-/* Sidebar panel */
-.page-layout {
-display: grid;
-grid-template-columns: 1fr 280px;
-gap: 24px;
-align-items: start;
-}
-
-.sidebar {
-position: sticky;
-top: 20px;
-display: flex;
-flex-direction: column;
-gap: 16px;
-}
-
-.widget {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 8px;
-overflow: hidden;
-}
-
-.widget-header {
-padding: 12px 16px;
-border-bottom: 1px solid var(–border);
-font-size: 12px;
-color: var(–accent);
-font-family: ‘Share Tech Mono’, monospace;
-letter-spacing: 2px;
-text-transform: uppercase;
-}
-
-.widget-body { padding: 16px; }
-
-.radar-list { list-style: none; }
-
-.radar-list li {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 8px 0;
-border-bottom: 1px solid rgba(13,51,82,0.4);
-font-size: 13px;
-cursor: pointer;
-transition: color 0.2s;
-}
-
-.radar-list li:last-child { border-bottom: none; }
-.radar-list li:hover { color: var(–accent); }
-
-.radar-status {
-width: 8px;
-height: 8px;
-border-radius: 50%;
-flex-shrink: 0;
-}
-
-.rs-online { background: var(–accent2); box-shadow: 0 0 6px rgba(0,255,157,0.6); }
-.rs-fault { background: var(–danger); box-shadow: 0 0 6px rgba(255,51,51,0.6); animation: blink 1.5s infinite; }
-.rs-warn { background: var(–warn); box-shadow: 0 0 6px rgba(255,153,0,0.6); }
-
-.radar-name { flex: 1; padding: 0 10px; }
-
-/* Chart bar */
-.mini-chart { display: flex; flex-direction: column; gap: 6px; }
-
-.chart-row {
-display: flex;
-align-items: center;
-gap: 10px;
-font-size: 12px;
-}
-
-.chart-label { color: var(–text-dim); min-width: 80px; text-align: right; }
-
-.chart-bar-wrap {
-flex: 1;
-height: 12px;
-background: rgba(13,51,82,0.5);
-border-radius: 2px;
-overflow: hidden;
-}
-
-.chart-bar {
-height: 100%;
-border-radius: 2px;
-transition: width 1s ease;
-}
-
-.chart-val { min-width: 24px; font-family: ‘Share Tech Mono’, monospace; color: var(–text-dim); font-size: 11px; }
-
-/* Responsive */
-@media (max-width: 900px) {
-.page-layout { grid-template-columns: 1fr; }
-.sidebar { position: static; }
-.header-stats { gap: 16px; }
-.form-row { grid-template-columns: 1fr; }
-.fault-card { grid-template-columns: 1fr; }
-.fault-id-col { flex-direction: row; }
-}
-
-.empty-state {
-text-align: center;
-padding: 60px 20px;
-color: var(–text-dim);
-}
-
-.empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
-.empty-state p { font-size: 14px; }
-
-/* Notification toast */
-.toast {
-position: fixed;
-bottom: 30px;
-left: 50%;
-transform: translateX(-50%) translateY(80px);
-background: var(–surface2);
-border: 1px solid var(–accent);
-color: var(–accent);
-padding: 12px 24px;
-border-radius: 6px;
-font-size: 14px;
-z-index: 999;
-transition: transform 0.3s ease;
-box-shadow: 0 0 30px rgba(0,200,255,0.3);
-}
-
-.toast.show { transform: translateX(-50%) translateY(0); }
-
-.section-title {
-font-size: 13px;
-color: var(–text-dim);
-font-family: ‘Share Tech Mono’, monospace;
-letter-spacing: 2px;
-text-transform: uppercase;
-margin-bottom: 16px;
-padding-bottom: 10px;
-border-bottom: 1px solid var(–border);
-}
-
-.detail-modal .fault-detail-block {
-background: var(–bg);
-border: 1px solid var(–border);
-border-radius: 6px;
-padding: 16px;
-margin-bottom: 16px;
-font-size: 14px;
-line-height: 1.8;
-}
-
-.detail-kv { display: flex; gap: 10px; margin-bottom: 6px; }
-.detail-key { color: var(–text-dim); min-width: 120px; }
-.detail-val { color: #fff; font-weight: 500; }
-
-.timeline-item {
-display: flex;
-gap: 12px;
-margin-bottom: 12px;
-padding-bottom: 12px;
-border-bottom: 1px solid rgba(13,51,82,0.4);
-font-size: 13px;
-}
-
-.timeline-time {
-font-family: ‘Share Tech Mono’, monospace;
-color: var(–text-dim);
-font-size: 11px;
-min-width: 90px;
-padding-top: 2px;
-}
-
-.timeline-event { color: var(–text); }
 </style>
 
 </head>
 <body>
+<div class="grid-bg"></div>
+<div class="vignette"></div>
 
-<div class="radar-bg"></div>
-<div class="sweep"></div>
+<!-- ══════════════════════════════════════
+     LOGIN PAGE
+══════════════════════════════════════ -->
 
-<!-- Header -->
+<div id="loginPage">
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">
+    <!-- Animated radar circles -->
+    <svg style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:800px;height:800px;opacity:.04" viewBox="0 0 800 400"><circle cx="400" cy="400" r="380" stroke="#00c8ff" stroke-width="1" fill="none"/><circle cx="400" cy="400" r="280" stroke="#00c8ff" stroke-width="1" fill="none"/><circle cx="400" cy="400" r="180" stroke="#00c8ff" stroke-width="1" fill="none"/><circle cx="400" cy="400" r="80" stroke="#00c8ff" stroke-width="1" fill="none"/><line x1="0" y1="400" x2="800" y2="400" stroke="#00c8ff" stroke-width=".5"/><line x1="400" y1="0" x2="400" y2="800" stroke="#00c8ff" stroke-width=".5"/></svg>
+  </div>
 
-<header>
-  <div class="header-top">
-    <div class="logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="24" cy="24" r="22" stroke="#0d3352" stroke-width="1.5"/>
-          <circle cx="24" cy="24" r="14" stroke="#0d3352" stroke-width="1"/>
-          <circle cx="24" cy="24" r="6" stroke="#00c8ff" stroke-width="1.5"/>
-          <circle cx="24" cy="24" r="2" fill="#00c8ff"/>
-          <line x1="24" y1="24" x2="44" y2="10" stroke="#00c8ff" stroke-width="1.5" stroke-linecap="round" opacity="0.7">
-            <animateTransform attributeName="transform" type="rotate" from="0 24 24" to="360 24 24" dur="4s" repeatCount="indefinite"/>
+  <div class="login-wrap">
+    <div class="login-logo">
+      <div class="login-radar-icon">
+        <svg viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="38" stroke="#0d3352" stroke-width="1.5"/>
+          <circle cx="40" cy="40" r="26" stroke="#0d3352" stroke-width="1"/>
+          <circle cx="40" cy="40" r="14" stroke="#0d3352" stroke-width="1"/>
+          <circle cx="40" cy="40" r="3" fill="#00c8ff"/>
+          <line x1="40" y1="40" x2="72" y2="18" stroke="#00c8ff" stroke-width="2" stroke-linecap="round" opacity=".8">
+            <animateTransform attributeName="transform" type="rotate" from="0 40 40" to="360 40 40" dur="3s" repeatCount="indefinite"/>
           </line>
-          <circle cx="36" cy="12" r="2" fill="#00ff9d" opacity="0.8">
-            <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite"/>
+          <circle cx="60" cy="22" r="3" fill="#00ff9d" opacity=".9">
+            <animate attributeName="opacity" values=".9;.2;.9" dur="1.5s" repeatCount="indefinite"/>
           </circle>
-          <circle cx="10" cy="30" r="1.5" fill="#ff9900" opacity="0.8">
-            <animate attributeName="opacity" values="0.8;0.1;0.8" dur="1.5s" repeatCount="indefinite"/>
+          <circle cx="20" cy="55" r="2" fill="#ff9900" opacity=".8">
+            <animate attributeName="opacity" values=".8;.1;.8" dur="2s" repeatCount="indefinite"/>
           </circle>
         </svg>
       </div>
-      <div class="logo-text">
-        <h1>سجل الأعطال – الرادارات الساحلية</h1>
-        <span>COASTAL RADAR FAULT LOG SYSTEM</span>
+      <h1>منظومة الرادارات الساحلية</h1>
+      <p>COASTAL RADAR MANAGEMENT SYSTEM</p>
+    </div>
+
+```
+<div class="login-card">
+  <div class="login-section-title">AUTHENTICATION REQUIRED</div>
+  <div class="login-title">تسجيل الدخول</div>
+
+  <div class="login-error" id="loginError">⚠ اسم المستخدم أو كلمة المرور غير صحيحة</div>
+  
+  <div class="form-group">
+    <label class="form-label">اسم المستخدم</label>
+    <input class="form-input" id="loginUser" type="text" placeholder="أدخل اسم المستخدم" autocomplete="username">
+  </div>
+  <div class="form-group">
+    <label class="form-label">كلمة المرور</label>
+    <input class="form-input" id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password">
+  </div>
+
+  <button class="login-btn" onclick="doLogin()">دخول إلى النظام</button>
+
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px">
+    <div style="width:6px;height:6px;border-radius:50%;background:var(--a2);animation:blink 2s infinite"></div>
+    <span style="font-size:11px;font-family:'Share Tech Mono',monospace;color:var(--td);letter-spacing:1px">SECURE ACCESS — AUTHORIZED PERSONNEL ONLY</span>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     APP SHELL
+══════════════════════════════════════ -->
+
+<div id="appShell">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="#0d3352" stroke-width="1"/><circle cx="16" cy="16" r="9" stroke="#0d3352" stroke-width=".8"/><circle cx="16" cy="16" r="1.5" fill="#00c8ff"/><line x1="16" y1="16" x2="28" y2="8" stroke="#00c8ff" stroke-width="1.2" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" from="0 16 16" to="360 16 16" dur="3s" repeatCount="indefinite"/></line></svg>
+      <div class="tl-text"><h1>منظومة الرادارات الساحلية</h1><span>COASTAL RADAR SYSTEM</span></div>
+    </div>
+
+```
+<div class="ticker-wrap">
+  <div style="display:flex;align-items:center;gap:6px;overflow:hidden">
+    <div class="ticker-dot"></div>
+    <div class="ticker" id="tickerText">SYSTEM ONLINE ● جميع الأنظمة تعمل ● RADAR-01 ONLINE ● RADAR-02 FAULT ● RADAR-03 MAINTENANCE ● RADAR-04 ONLINE ● RADAR-05 ONLINE ● RADAR-06 MAINTENANCE ● SYSTEM ONLINE ● جميع الأنظمة تعمل ● RADAR-01 ONLINE ● RADAR-02 FAULT ●</div>
+  </div>
+</div>
+
+<div class="topbar-right">
+  <div class="topbar-stat ts-crit"><div class="ts-v" id="tsC">0</div><div class="ts-l">حرج</div></div>
+  <div class="topbar-stat ts-warn"><div class="ts-v" id="tsW">0</div><div class="ts-l">تحذير</div></div>
+  <div class="topbar-stat ts-ok"><div class="ts-v" id="tsOK">0</div><div class="ts-l">محلول</div></div>
+  <div class="topbar-stat ts-blue"><div class="ts-v" id="tsR">0</div><div class="ts-l">رادار</div></div>
+  <div class="topbar-divider"></div>
+  <div class="topbar-clock" id="clock">00:00:00</div>
+  
+  <!-- Notifications -->
+  <div style="position:relative">
+    <button class="notif-btn" onclick="toggleNotif()">
+      🔔
+      <div class="notif-badge" id="notifCount">3</div>
+    </button>
+    <div class="notif-panel" id="notifPanel">
+      <div class="np-header"><h4>التنبيهات</h4><button class="btn btn-ghost btn-xs" onclick="clearNotif()">مسح الكل</button></div>
+      <div id="notifList"></div>
+    </div>
+  </div>
+
+  <!-- User menu -->
+  <div class="topbar-user" onclick="toggleUserMenu()" id="userBtn">
+    <div class="tu-avatar av-a" id="topAvatar">م</div>
+    <div><div class="tu-name" id="topName">المدير</div><div class="tu-role" id="topRole">مدير النظام</div></div>
+    <span style="font-size:10px;color:var(--td)">▾</span>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="ud-item" onclick="openProfileModal()">👤 الملف الشخصي</div>
+      <div class="ud-item" onclick="goto('settings')">⚙ الإعدادات</div>
+      <div class="ud-divider"></div>
+      <div class="ud-item danger" onclick="logout()">🚪 تسجيل الخروج</div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div class="app-body">
+    <!-- SIDE NAV -->
+    <nav class="sidenav">
+      <div class="nav-s">الرئيسية</div>
+      <div class="ni active" onclick="goto('dashboard',this)" id="nav-dashboard"><span class="ico">📊</span><span>لوحة التحكم</span></div>
+
+```
+  <div class="nav-s">المراقبة</div>
+  <div class="ni" onclick="goto('radars',this)" id="nav-radars"><span class="ico">📡</span><span>متابعة الرادارات</span></div>
+  <div class="ni" onclick="goto('readiness',this)" id="nav-readiness"><span class="ico">🎯</span><span>الجاهزية</span></div>
+
+  <div class="nav-s">الأعطال</div>
+  <div class="ni" onclick="goto('faults',this)" id="nav-faults"><span class="ico">⚠</span><span>سجل الأعطال</span><span class="ni-badge red" id="navFaultBadge">0</span></div>
+
+  <div class="nav-div" id="adminNav"></div>
+  <div class="nav-s" id="adminNavS" style="display:none">الإدارة</div>
+  <div class="ni" onclick="goto('members',this)" id="nav-members" style="display:none"><span class="ico">👥</span><span>الأعضاء</span></div>
+  <div class="ni" onclick="goto('settings',this)" id="nav-settings" style="display:none"><span class="ico">⚙</span><span>الإعدادات</span></div>
+  <div class="ni" onclick="goto('actlog',this)" id="nav-actlog" style="display:none"><span class="ico">📋</span><span>سجل النشاط</span></div>
+
+  <div class="sidenav-bottom">
+    <div class="ni" onclick="logout()" style="color:var(--danger)"><span class="ico">🚪</span><span>خروج</span></div>
+  </div>
+</nav>
+
+<!-- PAGES -->
+<div class="main-content">
+
+  <!-- ══ DASHBOARD ══ -->
+  <div class="page active" id="page-dashboard">
+    <div class="ph">
+      <div class="ph-title"><h2>لوحة التحكم</h2><p>DASHBOARD — نظرة عامة على المنظومة</p></div>
+      <div class="ph-actions" id="dashActions"></div>
+    </div>
+
+    <div class="cards-row cards-4" id="dashStats"></div>
+
+    <div class="two-col">
+      <div>
+        <div class="sh"><div class="sh-title">آخر الأعطال المسجلة</div><button class="btn btn-ghost btn-sm" onclick="goto('faults')">عرض الكل</button></div>
+        <div class="tw"><table><thead><tr><th>الرقم</th><th>الرادار</th><th>العطل</th><th>الخطورة</th><th>الحالة</th></tr></thead><tbody id="dashFaultsTable"></tbody></table></div>
+      </div>
+      <div>
+        <div class="sh"><div class="sh-title">حالة الرادارات</div><button class="btn btn-ghost btn-sm" onclick="goto('radars')">التفاصيل</button></div>
+        <div class="tw"><table><thead><tr><th>الرادار</th><th>الموقع</th><th>الحالة</th><th>الجاهزية</th></tr></thead><tbody id="dashRadarsTable"></tbody></table></div>
       </div>
     </div>
-    <div class="header-stats">
-      <div class="stat-item critical">
-        <div class="stat-value" id="stat-critical">2</div>
-        <div class="stat-label">حرج</div>
+
+    <div class="two-col">
+      <div>
+        <div class="sh"><div class="sh-title">إحصائيات الأعطال حسب النوع</div></div>
+        <div class="tw" style="padding:16px"><div class="mini-chart" id="faultTypeChart"></div></div>
       </div>
-      <div class="stat-item warning">
-        <div class="stat-value" id="stat-warning">3</div>
-        <div class="stat-label">تحذير</div>
-      </div>
-      <div class="stat-item ok">
-        <div class="stat-value" id="stat-resolved">5</div>
-        <div class="stat-label">محلول</div>
+      <div>
+        <div class="sh"><div class="sh-title">آخر نشاطات النظام</div></div>
+        <div class="tw" id="dashActivity"></div>
       </div>
     </div>
   </div>
-  <div class="status-bar">
-    <div class="status-dot"></div>
-    <span>النظام يعمل</span>
-    <span style="margin:0 10px;color:var(--border)">|</span>
-    <div class="status-scroll">
-      RADAR-01 ● ONLINE &nbsp;&nbsp; RADAR-02 ● FAULT DETECTED &nbsp;&nbsp; RADAR-03 ● MAINTENANCE &nbsp;&nbsp; RADAR-04 ● ONLINE &nbsp;&nbsp; RADAR-05 ● ONLINE &nbsp;&nbsp; RADAR-06 ● WARNING &nbsp;&nbsp;
+
+  <!-- ══ RADARS MONITORING ══ -->
+  <div class="page" id="page-radars">
+    <div class="ph">
+      <div class="ph-title"><h2>متابعة الرادارات</h2><p>RADAR MONITORING — حالة جميع الرادارات الساحلية</p></div>
+      <div class="ph-actions" id="radarActions">
+        <button class="btn btn-ghost btn-sm" onclick="refreshRadarStatus()">↻ تحديث</button>
+      </div>
     </div>
+
+    <div class="cr">
+      <div class="sw"><input type="text" id="radarSearch" placeholder="بحث..." oninput="renderRadarPage()"></div>
+      <select class="sel" id="radarStatFilter" onchange="renderRadarPage()">
+        <option value="">كل الحالات</option>
+        <option value="online">يعمل</option>
+        <option value="fault">عطل</option>
+        <option value="maintenance">صيانة</option>
+        <option value="offline">غير متصل</option>
+      </select>
+    </div>
+
+    <!-- Summary row -->
+    <div class="cards-row cards-4" id="radarSummaryCards"></div>
+
+    <div class="radar-grid" id="radarGrid"></div>
   </div>
-  <nav>
-    <button class="nav-btn active" onclick="setTab(this,'all')">جميع الأعطال</button>
-    <button class="nav-btn" onclick="setTab(this,'critical')">حرجة</button>
-    <button class="nav-btn" onclick="setTab(this,'warning')">تحذيرات</button>
-    <button class="nav-btn" onclick="setTab(this,'resolved')">محلولة</button>
-  </nav>
-</header>
 
-<!-- Main -->
+  <!-- ══ READINESS ══ -->
+  <div class="page" id="page-readiness">
+    <div class="ph">
+      <div class="ph-title"><h2>الجاهزية الإجمالية</h2><p>READINESS STATUS — تقرير جاهزية الرادارات</p></div>
+    </div>
 
-<div class="container">
-  <div class="page-layout">
-    <!-- Faults list -->
+    <!-- Overall gauge -->
+    <div class="cards-row cards-3" id="readinessTopCards"></div>
+
+    <div class="two-col">
+      <div>
+        <div class="sh"><div class="sh-title">جاهزية كل رادار</div></div>
+        <div class="readiness-grid" id="readinessGrid"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div>
+          <div class="sh"><div class="sh-title">تقرير الجاهزية الشهري</div></div>
+          <div class="tw" style="padding:16px">
+            <div class="mini-chart" id="readinessMonthChart"></div>
+          </div>
+        </div>
+        <div>
+          <div class="sh"><div class="sh-title">وقت التشغيل التراكمي</div></div>
+          <div class="tw" style="padding:20px">
+            <div class="uptime-display" id="uptimeDisplay">---</div>
+            <div class="uptime-label">وقت التشغيل منذ آخر إعادة تشغيل</div>
+            <div style="margin-top:16px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="uptimeStats"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div>
-      <div class="controls">
-        <button class="btn-primary" onclick="openAddModal()">
-          <span>+</span> تسجيل عطل جديد
-        </button>
-        <div class="search-box">
-          <input type="text" id="searchInput" placeholder="البحث في الأعطال..." oninput="renderFaults()">
-        </div>
-        <select class="filter-select" id="radarFilter" onchange="renderFaults()">
-          <option value="">كل الرادارات</option>
-          <option>RADAR-01</option>
-          <option>RADAR-02</option>
-          <option>RADAR-03</option>
-          <option>RADAR-04</option>
-          <option>RADAR-05</option>
-          <option>RADAR-06</option>
-        </select>
-      </div>
+      <div class="sh"><div class="sh-title">تفاصيل الجاهزية لكل رادار</div></div>
+      <div class="tw"><table><thead><tr><th>الرادار</th><th>الموقع</th><th>الجاهزية %</th><th>ساعات التشغيل</th><th>أعطال الشهر</th><th>آخر صيانة</th><th>الحالة</th></tr></thead><tbody id="readinessTable"></tbody></table></div>
+    </div>
+  </div>
 
+  <!-- ══ FAULTS ══ -->
+  <div class="page" id="page-faults">
+    <div class="ph">
+      <div class="ph-title"><h2>سجل الأعطال</h2><p>FAULT LOG — تسجيل ومتابعة أعطال الرادارات</p></div>
+      <div class="ph-actions">
+        <button class="btn btn-accent" onclick="openFaultModal()">+ تسجيل عطل</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportFaults()">⬇ تصدير</button>
+      </div>
+    </div>
+
+    <div class="cards-row cards-4" id="faultStatsCards"></div>
+
+    <div class="cr">
+      <div class="sw"><input type="text" id="faultSearch" placeholder="بحث في الأعطال..." oninput="renderFaults()"></div>
+      <select class="sel" id="fSev" onchange="renderFaults()"><option value="">كل الخطورات</option><option value="critical">حرجة</option><option value="warning">تحذيرات</option><option value="info">معلومات</option></select>
+      <select class="sel" id="fStat" onchange="renderFaults()"><option value="">كل الحالات</option><option value="open">مفتوحة</option><option value="resolved">محلولة</option></select>
+      <select class="sel" id="fRad" onchange="renderFaults()"><option value="">كل الرادارات</option></select>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>الرقم</th><th>الرادار</th><th>العطل</th><th>النوع</th><th>الخطورة</th><th>المسؤول</th><th>الحالة</th><th>التاريخ</th><th>إجراءات</th></tr></thead>
+        <tbody id="faultsBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ MEMBERS ══ -->
+  <div class="page" id="page-members">
+    <div class="ph">
+      <div class="ph-title"><h2>إدارة الأعضاء</h2><p>MEMBERS — إدارة صلاحيات المستخدمين</p></div>
+      <div class="ph-actions"><button class="btn btn-accent" onclick="openMemberModal()">+ إضافة عضو</button></div>
+    </div>
+
+    <div class="cr">
+      <div class="sw"><input type="text" id="memberSearch" placeholder="بحث..." oninput="renderMembers()"></div>
+      <select class="sel" id="memberRoleF" onchange="renderMembers()"><option value="">كل الأدوار</option><option value="admin">مدير</option><option value="tech">تقني</option><option value="viewer">مراقب</option></select>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>العضو</th><th>الدور</th><th>الرادارات</th><th>أعطال مغلقة</th><th>آخر دخول</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+        <tbody id="membersBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ SETTINGS ══ -->
+  <div class="page" id="page-settings">
+    <div class="ph">
+      <div class="ph-title"><h2>إعدادات النظام</h2><p>SETTINGS — ضبط وتخصيص المنظومة</p></div>
+      <div class="ph-actions"><button class="btn btn-accent" onclick="saveSettings()">💾 حفظ</button></div>
+    </div>
+    <div class="sg">
+      <div class="sc">
+        <div class="sc-title">⚙ إعدادات عامة</div>
+        <div class="fg"><label class="fl">اسم المنظومة</label><input class="fi" id="sName" value="منظومة الرادارات الساحلية – المنطقة الشمالية"></div>
+        <div class="fg"><label class="fl">بريد التنبيهات</label><input class="fi" id="sEmail" value="alerts@coastal-radar.gov" type="email"></div>
+        <div class="fg"><label class="fl">توقيت النظام</label><select class="fs"><option selected>Arabia Standard Time (AST +3)</option><option>UTC+0</option><option>UTC+4</option></select></div>
+        <div class="fg"><label class="fl">الوصف</label><textarea class="ft" style="min-height:60px">نظام متكامل لمراقبة الرادارات الساحلية</textarea></div>
+      </div>
+      <div class="sc">
+        <div class="sc-title">🔔 التنبيهات</div>
+        <div class="tr"><span class="tr-l">تنبيه عند عطل حرج</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="tr"><span class="tr-l">بريد عند تسجيل عطل</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="tr"><span class="tr-l">ملخص يومي</span><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+        <div class="tr"><span class="tr-l">تنبيه اتصال/انقطاع رادار</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="tr"><span class="tr-l">صوت التنبيه</span><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+      </div>
+      <div class="sc">
+        <div class="sc-title">🔒 الأمان</div>
+        <div class="tr"><span class="tr-l">المصادقة الثنائية (2FA)</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="tr"><span class="tr-l">خروج تلقائي بعد 30 دقيقة</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="tr"><span class="tr-l">تسجيل نشاط المستخدمين</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div style="height:14px"></div>
+        <div class="fg"><label class="fl">كلمة المرور الجديدة</label><input class="fi" type="password" placeholder="••••••••"></div>
+        <div class="fg"><label class="fl">تأكيد كلمة المرور</label><input class="fi" type="password" placeholder="••••••••"></div>
+        <button class="btn btn-warn btn-sm" onclick="showToast('تم تغيير كلمة المرور','ok')">تغيير كلمة المرور</button>
+      </div>
+      <div class="sc">
+        <div class="sc-title">🎨 الواجهة</div>
+        <div class="tr"><span class="tr-l">الوضع الداكن</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="tr"><span class="tr-l">تأثير رادار الخلفية</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="tr"><span class="tr-l">تحديث تلقائي</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="tr"><span class="tr-l">شريط الأخبار</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div style="height:14px"></div>
+        <div class="fg"><label class="fl">سجلات بالصفحة</label><select class="fs"><option>25</option><option selected>50</option><option>100</option></select></div>
+        <button class="btn btn-danger btn-sm" style="margin-top:6px" onclick="confirmAction('مسح جميع بيانات الأعطال؟',()=>{faults=[];renderAll();showToast('تم المسح','ok')})">🗑 مسح بيانات الأعطال</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ACTIVITY LOG ══ -->
+  <div class="page" id="page-actlog">
+    <div class="ph">
+      <div class="ph-title"><h2>سجل النشاط</h2><p>ACTIVITY LOG — جميع إجراءات المستخدمين</p></div>
+      <div class="ph-actions"><button class="btn btn-ghost btn-sm" onclick="actLog=[];renderActLog();showToast('تم مسح السجل','ok')">🗑 مسح</button></div>
+    </div>
+    <div class="tw"><table><thead><tr><th>الوقت</th><th>الحدث</th><th>المستخدم</th><th>الدور</th></tr></thead><tbody id="actLogBody"></tbody></table></div>
+  </div>
+
+</div><!-- /main-content -->
 ```
-  <div class="section-title" id="faults-count">سجل الأعطال</div>
-  <div class="faults-grid" id="faultsGrid"></div>
+
+  </div><!-- /app-body -->
+</div><!-- /appShell -->
+
+<!-- ══════════════════════════════════════
+     MODALS
+══════════════════════════════════════ -->
+
+<!-- Fault Modal -->
+
+<div class="mo" id="faultModal">
+<div class="modal modal-lg">
+  <div class="mh"><h3 id="faultModalTitle">⚠ تسجيل عطل جديد</h3><button class="mx" onclick="closeMo('faultModal')">✕</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><label class="fl">الرادار</label><select class="fs" id="fmRad"></select></div>
+      <div class="fg"><label class="fl">مستوى الخطورة</label><select class="fs" id="fmSev"><option value="critical">🔴 حرج</option><option value="warning">🟡 تحذير</option><option value="info">🔵 معلومات</option></select></div>
+    </div>
+    <div class="fg"><label class="fl">عنوان العطل</label><input class="fi" id="fmTitle" placeholder="وصف مختصر للعطل..."></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">نوع العطل</label><select class="fs" id="fmType"><option>عطل كهربائي</option><option>عطل اتصال</option><option>عطل برمجي</option><option>عطل ميكانيكي</option><option>عطل هوائي</option><option>أخرى</option></select></div>
+      <div class="fg"><label class="fl">التقني المسؤول</label><select class="fs" id="fmTech"></select></div>
+    </div>
+    <div class="fg"><label class="fl">وصف العطل</label><textarea class="ft" id="fmDesc" placeholder="اذكر الأعراض والتفاصيل..."></textarea></div>
+    <div class="fg"><label class="fl">الإجراءات المتخذة</label><textarea class="ft" id="fmAct" placeholder="ما الإجراءات التي اتخذتها؟" style="min-height:70px"></textarea></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">التصنيفات (مفصولة بفاصلة)</label><input class="fi" id="fmTags" placeholder="كهرباء، عاجل، هوائي"></div>
+      <div class="fg"><label class="fl">الحالة</label><select class="fs" id="fmStat"><option value="open">مفتوح</option><option value="resolved">محلول</option></select></div>
+    </div>
+  </div>
+  <div class="mf"><button class="btn btn-ghost" onclick="closeMo('faultModal')">إلغاء</button><button class="btn btn-accent" onclick="saveFault()">💾 حفظ العطل</button></div>
+</div>
 </div>
 
-<!-- Sidebar -->
-<div class="sidebar">
-  <div class="widget">
-    <div class="widget-header">حالة الرادارات</div>
-    <div class="widget-body">
-      <ul class="radar-list">
-        <li><div class="radar-status rs-online"></div><span class="radar-name">RADAR-01 – الميناء الشمالي</span></li>
-        <li><div class="radar-status rs-fault"></div><span class="radar-name">RADAR-02 – رأس البر</span></li>
-        <li><div class="radar-status rs-warn"></div><span class="radar-name">RADAR-03 – خليج البحر</span></li>
-        <li><div class="radar-status rs-online"></div><span class="radar-name">RADAR-04 – جزيرة الصياد</span></li>
-        <li><div class="radar-status rs-online"></div><span class="radar-name">RADAR-05 – المنطقة الجنوبية</span></li>
-        <li><div class="radar-status rs-warn"></div><span class="radar-name">RADAR-06 – البوابة الساحلية</span></li>
-      </ul>
-    </div>
-  </div>
+<!-- Fault Detail Modal -->
 
-  <div class="widget">
-    <div class="widget-header">إحصائيات الأعطال</div>
-    <div class="widget-body">
-      <div class="mini-chart">
-        <div class="chart-row">
-          <div class="chart-label">عطل كهربائي</div>
-          <div class="chart-bar-wrap"><div class="chart-bar" style="width:70%;background:var(--danger)"></div></div>
-          <div class="chart-val">7</div>
-        </div>
-        <div class="chart-row">
-          <div class="chart-label">اتصال</div>
-          <div class="chart-bar-wrap"><div class="chart-bar" style="width:50%;background:var(--warn)"></div></div>
-          <div class="chart-val">5</div>
-        </div>
-        <div class="chart-row">
-          <div class="chart-label">برمجي</div>
-          <div class="chart-bar-wrap"><div class="chart-bar" style="width:30%;background:var(--accent)"></div></div>
-          <div class="chart-val">3</div>
-        </div>
-        <div class="chart-row">
-          <div class="chart-label">ميكانيكي</div>
-          <div class="chart-bar-wrap"><div class="chart-bar" style="width:20%;background:var(--accent2)"></div></div>
-          <div class="chart-val">2</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="widget">
-    <div class="widget-header">الوقت الحالي</div>
-    <div class="widget-body" style="text-align:center">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:28px;color:var(--accent)" id="clock">00:00:00</div>
-      <div style="font-size:12px;color:var(--text-dim);margin-top:6px" id="dateDisplay"></div>
-    </div>
+<div class="mo" id="fdModal">
+<div class="modal modal-lg">
+  <div class="mh"><h3 id="fdTitle">تفاصيل العطل</h3><button class="mx" onclick="closeMo('fdModal')">✕</button></div>
+  <div class="mb" id="fdBody"></div>
+  <div class="mf">
+    <button class="btn btn-ghost" onclick="closeMo('fdModal')">إغلاق</button>
+    <button class="btn btn-warn" id="fdEdit">✏ تعديل</button>
+    <button class="btn btn-ok" id="fdResolve">✓ تحديد كمحلول</button>
   </div>
 </div>
-```
-
-  </div>
 </div>
 
-<!-- Add Fault Modal -->
+<!-- Radar Modal -->
 
-<div class="modal-overlay" id="addModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">⚠ تسجيل عطل جديد</div>
-      <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+<div class="mo" id="radarModal">
+<div class="modal">
+  <div class="mh"><h3 id="radarModalTitle">📡 إضافة رادار</h3><button class="mx" onclick="closeMo('radarModal')">✕</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><label class="fl">كود الرادار</label><input class="fi" id="rmCode" placeholder="RADAR-XX"></div>
+      <div class="fg"><label class="fl">الحالة</label><select class="fs" id="rmStat"><option value="online">✅ يعمل</option><option value="fault">🔴 عطل</option><option value="maintenance">🟡 صيانة</option><option value="offline">⚫ غير متصل</option></select></div>
     </div>
-    <div class="modal-body">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">الرادار المتضرر</label>
-          <select class="form-select" id="faultRadar">
-            <option>RADAR-01 – الميناء الشمالي</option>
-            <option>RADAR-02 – رأس البر</option>
-            <option>RADAR-03 – خليج البحر</option>
-            <option>RADAR-04 – جزيرة الصياد</option>
-            <option>RADAR-05 – المنطقة الجنوبية</option>
-            <option>RADAR-06 – البوابة الساحلية</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">مستوى الخطورة</label>
-          <select class="form-select" id="faultSeverity">
-            <option value="critical">حرج</option>
-            <option value="warning">تحذير</option>
-            <option value="info">معلومات</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">عنوان العطل</label>
-        <input type="text" class="form-input" id="faultTitle" placeholder="مثال: انقطاع في إشارة الرادار الرئيسية">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">نوع العطل</label>
-          <select class="form-select" id="faultType">
-            <option>عطل كهربائي</option>
-            <option>عطل اتصال</option>
-            <option>عطل برمجي</option>
-            <option>عطل ميكانيكي</option>
-            <option>عطل هوائي</option>
-            <option>أخرى</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">المسؤول عن الصيانة</label>
-          <input type="text" class="form-input" id="faultTech" placeholder="اسم التقني المسؤول">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">وصف العطل التفصيلي</label>
-        <textarea class="form-textarea" id="faultDesc" placeholder="اكتب تفاصيل العطل، الأعراض الملاحظة، والإجراءات المتخذة..."></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">الإجراءات المتخذة</label>
-        <textarea class="form-textarea" id="faultActions" placeholder="ما الإجراءات التي تم اتخاذها حتى الآن؟" style="min-height:70px"></textarea>
-      </div>
+    <div class="fg"><label class="fl">اسم الموقع</label><input class="fi" id="rmLoc" placeholder="مثال: الميناء الشمالي – رأس البر"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">نوع الرادار</label><input class="fi" id="rmType" placeholder="S-Band Surface Radar"></div>
+      <div class="fg"><label class="fl">الشركة المصنعة</label><input class="fi" id="rmMaker" placeholder="Furuno / Kelvin Hughes"></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('addModal')">إلغاء</button>
-      <button class="btn-primary" onclick="addFault()">✓ حفظ العطل</button>
+    <div class="fr">
+      <div class="fg"><label class="fl">نطاق الكشف (كم)</label><input class="fi" id="rmRange" type="number" placeholder="96"></div>
+      <div class="fg"><label class="fl">آخر صيانة</label><input class="fi" id="rmMaint" type="date"></div>
     </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">الجاهزية (%)</label><input class="fi" id="rmReady" type="number" min="0" max="100" placeholder="95"></div>
+      <div class="fg"><label class="fl">ساعات التشغيل</label><input class="fi" id="rmHours" type="number" placeholder="8760"></div>
+    </div>
+    <div class="fg"><label class="fl">ملاحظات</label><textarea class="ft" id="rmNotes" style="min-height:65px" placeholder="أي ملاحظات إضافية..."></textarea></div>
   </div>
+  <div class="mf"><button class="btn btn-ghost" onclick="closeMo('radarModal')">إلغاء</button><button class="btn btn-accent" onclick="saveRadar()">💾 حفظ الرادار</button></div>
+</div>
 </div>
 
-<!-- Detail Modal -->
+<!-- Member Modal -->
 
-<div class="modal-overlay" id="detailModal">
-  <div class="modal detail-modal">
-    <div class="modal-header">
-      <div class="modal-title" id="detailModalTitle">تفاصيل العطل</div>
-      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+<div class="mo" id="memberModal">
+<div class="modal">
+  <div class="mh"><h3 id="memberModalTitle">👤 إضافة عضو</h3><button class="mx" onclick="closeMo('memberModal')">✕</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><label class="fl">الاسم الكامل</label><input class="fi" id="mmName" placeholder="الاسم الثلاثي"></div>
+      <div class="fg"><label class="fl">اسم المستخدم</label><input class="fi" id="mmUser" placeholder="username"></div>
     </div>
-    <div class="modal-body" id="detailModalBody"></div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('detailModal')">إغلاق</button>
-      <button class="btn-primary" id="resolveBtn" onclick="resolveFromDetail()">✓ تحديد كمحلول</button>
+    <div class="fr">
+      <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fi" id="mmEmail" type="email" placeholder="user@coastal.gov"></div>
+      <div class="fg"><label class="fl">كلمة المرور</label><input class="fi" id="mmPass" type="password" placeholder="••••••••"></div>
     </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">الدور الوظيفي</label><select class="fs" id="mmRole"><option value="admin">مدير النظام</option><option value="tech">تقني صيانة</option><option value="viewer">مراقب</option></select></div>
+      <div class="fg"><label class="fl">رقم الهاتف</label><input class="fi" id="mmPhone" placeholder="+966 5X XXX XXXX"></div>
+    </div>
+    <div class="fg"><label class="fl">الرادارات المسندة (Ctrl + Click للاختيار المتعدد)</label><select class="fs" id="mmRadars" multiple style="min-height:75px"></select></div>
+    <div class="fg"><label class="fl">ملاحظات</label><textarea class="ft" id="mmNotes" style="min-height:60px" placeholder="أي ملاحظات عن العضو..."></textarea></div>
   </div>
+  <div class="mf"><button class="btn btn-ghost" onclick="closeMo('memberModal')">إلغاء</button><button class="btn btn-accent" onclick="saveMember()">💾 حفظ العضو</button></div>
+</div>
 </div>
 
-<div class="toast" id="toast">تم الحفظ بنجاح</div>
+<!-- Profile Modal -->
+
+<div class="mo" id="profileModal">
+<div class="modal">
+  <div class="mh"><h3>👤 الملف الشخصي</h3><button class="mx" onclick="closeMo('profileModal')">✕</button></div>
+  <div class="mb" id="profileBody"></div>
+  <div class="mf"><button class="btn btn-ghost" onclick="closeMo('profileModal')">إغلاق</button><button class="btn btn-accent" onclick="saveProfile()">💾 حفظ التغييرات</button></div>
+</div>
+</div>
+
+<!-- Confirm Modal -->
+
+<div class="mo" id="confirmModal">
+<div class="modal confirm-card">
+  <div class="confirm-body">
+    <div class="confirm-icon">⚠️</div>
+    <div class="confirm-msg" id="confirmMsg">هل أنت متأكد؟</div>
+    <div class="confirm-sub">لا يمكن التراجع عن هذا الإجراء</div>
+  </div>
+  <div class="mf"><button class="btn btn-ghost" onclick="closeMo('confirmModal')">إلغاء</button><button class="btn btn-danger" id="confirmOK">تأكيد</button></div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-  // Initial data
-  let faults = [
-    {
-      id: 'FLT-001', radar: 'RADAR-02', radarName: 'RADAR-02 – رأس البر',
-      severity: 'critical', title: 'انقطاع كامل في إشارة الرادار الرئيسية',
-      type: 'عطل كهربائي', tech: 'م. محمد الأحمدي',
-      desc: 'توقف الرادار عن الإرسال والاستقبال بشكل مفاجئ. تم فحص لوحة التحكم الرئيسية وتبين وجود حرق في المكثفات. لا تصل طاقة للهوائي.',
-      actions: 'تم قطع الكهرباء عن الجهاز وتأمين المنطقة. بانتظار وصول فريق الصيانة المتخصص.',
-      date: '2026-02-24 08:30', status: 'open',
-      tags: ['كهرباء', 'حرق', 'عاجل']
-    },
-    {
-      id: 'FLT-002', radar: 'RADAR-03', radarName: 'RADAR-03 – خليج البحر',
-      severity: 'warning', title: 'تشويش في بيانات الكشف – نطاق 15-20 كم',
-      type: 'عطل برمجي', tech: 'م. سالم العبيدي',
-      desc: 'لاحظ المراقبون ظهور أهداف وهمية في النطاق 15-20 كيلومتر. البيانات غير دقيقة وتظهر أهدافاً غير موجودة فعلياً على الشاشة.',
-      actions: 'تم إعادة تشغيل نظام معالجة الإشارة. المشكلة مستمرة. جارٍ مراجعة معاملات التصفية.',
-      date: '2026-02-23 14:15', status: 'open',
-      tags: ['برمجي', 'معالجة إشارة', 'أهداف وهمية']
-    },
-    {
-      id: 'FLT-003', radar: 'RADAR-01', radarName: 'RADAR-01 – الميناء الشمالي',
-      severity: 'warning', title: 'ارتفاع درجة حرارة وحدة الإرسال',
-      type: 'عطل ميكانيكي', tech: 'م.  ',
-      desc: 'رصد نظام المراقبة ارتفاعاً غير طبيعي في درجة حرارة وحدة الإرسال تجاوزت 85 درجة مئوية. نظام التبريد لا يعمل بكفاءة كافية.',
-      actions: 'تم خفض قوة الإرسال مؤقتاً. جارٍ فحص نظام التبريد ومراوح التهوية.',
-      date: '2026-02-23 09:00', status: 'open',
-      tags: ['حرارة', 'تبريد', 'مراقبة']
-    },
-    {
-      id: 'FLT-004', radar: 'RADAR-06', radarName: 'RADAR-06 – البوابة الساحلية',
-      severity: 'warning', title: 'انقطاع متكرر في خط الاتصال بالمركز',
-      type: 'عطل اتصال', tech: 'م.  ',
-      desc: 'يحدث انقطاع في الاتصال بين الرادار ومركز السيطرة كل 20-30 دقيقة تقريباً. مدة الانقطاع تتراوح بين 30 ثانية ودقيقتين.',
-      actions: 'تم فحص الكابلات واستبدال وحدة الشبكة. المشكلة تتكرر. يُشتبه في وجود عطل في جهاز التبديل الرئيسي.',
-      date: '2026-02-22 16:45', status: 'open',
-      tags: ['اتصال', 'شبكة', 'متقطع']
-    },
-    {
-      id: 'FLT-005', radar: 'RADAR-04', radarName: 'RADAR-04 – جزيرة الصياد',
-      severity: 'critical', title: 'تلف في هوائي الرادار بسبب العواصف',
-      type: 'عطل ميكانيكي', tech: 'م.  ',
-      desc: 'أسفرت العاصفة عن تلف جزئي في هوائي الرادار. يدور الهوائي بشكل غير منتظم ويتوقف في بعض الاتجاهات. الكشف في المقطع الشمالي مفقود.',
-      actions: 'تم إيقاف تشغيل الهوائي لمنع مزيد من الضرر. تم طلب قطع الغيار. المتوقع إصلاحه خلال 48 ساعة.',
-      date: '2026-02-21 22:00', status: 'open',
-      tags: ['هوائي', 'ميكانيكي', 'عاصفة', 'عاجل']
-    },
-    {
-      id: 'FLT-006', radar: 'RADAR-05', radarName: 'RADAR-05 – المنطقة الجنوبية',
-      severity: 'info', title: 'تحديث برنامج معالجة الإشارة – إعادة تشغيل مجدولة',
-      type: 'عطل برمجي', tech: 'م.  ',
-      desc: 'تم جدولة إعادة تشغيل الرادار لتطبيق تحديث برمجي يحسن دقة الكشف في الأحوال الجوية السيئة.',
-      actions: 'تم إعلام مركز السيطرة. التحديث سيتم بين الساعة 02:00-04:00 خارج وقت الذروة.',
-      date: '2026-02-20 10:00', status: 'resolved',
-      tags: ['تحديث', 'مجدول', 'برمجي']
-    },
-    {
-      id: 'FLT-007', radar: 'RADAR-01', radarName: 'RADAR-01 – الميناء الشمالي',
-      severity: 'warning', title: 'خلل في نظام تحديد الهوية الآلي (IFF)',
-      type: 'عطل برمجي', tech: 'م. تركي الشمري',
-      desc: 'لا يستجيب نظام IFF بشكل صحيح لأسئلة التعريف. بعض السفن المعتمدة تظهر كأهداف مجهولة.',
-      actions: 'تم التحقق من الكودات واستبعاد الخطأ البشري. جارٍ فحص برنامج IFF ومعدات الترددات.',
-      date: '2026-02-19 11:30', status: 'resolved',
-      tags: ['IFF', 'تعريف', 'برمجي']
-    },
-    {
-      id: 'FLT-008', radar: 'RADAR-02', radarName: 'RADAR-02 – رأس البر',
-      severity: 'critical', title: 'فقدان الاتصال بنظام تغذية الكهرباء الاحتياطي',
-      type: 'عطل كهربائي', tech: 'م.  ',
-      desc: 'نظام UPS لا يستجيب. في حال انقطع التيار الكهربائي الرئيسي فلن يعمل الرادار. يُشكل خطراً أمنياً بالغاً.',
-      actions: 'تم تشغيل المولد الاحتياطي يدوياً. بانتظار فني متخصص لفحص بطاريات UPS واللوحة الكهربائية.',
-      date: '2026-02-18 07:00', status: 'resolved',
-      tags: ['كهرباء', 'UPS', 'احتياطي', 'خطر']
+/* ══════════════════════════════════════
+   STATE & DATA
+══════════════════════════════════════ */
+let currentUser = null;
+let editFaultId = null;
+let editRadarId = null;
+let editMemberId = null;
+let actLog = [];
+let notifications = [];
+
+/* ══════════════════════════════════════
+   SECURITY — PASSWORD HASHING (SHA-256 simulation via stored hash)
+   الكلمات مخزنة كـ hash لا كنص واضح
+══════════════════════════════════════ */
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+/* المستخدمون — كلمات المرور مخزنة كـ SHA-256 hash */
+const USERS = [
+  {
+    username:'alzubir',
+    /* SHA-256 of "Alzubir6514@" */
+    passwordHash:'b9fa148107a014d8ca3fa29f02a8fd1ee03937174569ed784410e8601c9c8620',
+    role:'admin',
+    name:'المدير الزبير',
+    email:'alzubir@coastal-radar.gov',
+    phone:'',
+    avatar:'ز'
+  },
+];
+
+/* دالة التحقق من كلمة المرور */
+async function verifyPassword(plain, storedHash) {
+  /* للبيئة الإنتاجية: نقارن hash الإدخال بالـ hash المخزن */
+  const inputHash = await sha256(plain);
+  return inputHash === storedHash;
+}
+
+/* قائمة المحاولات الفاشلة — حماية من Brute Force */
+const loginAttempts = {};
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MS = 15 * 60 * 1000; /* 15 دقيقة */
+
+let radars = [
+  {id:'RADAR-01',location:'الميناء الشمالي',status:'online',type:'S-Band Surface Radar',maker:'Furuno',range:96,lastMaint:'',readiness:98,hours:0,faultsMonth:0,notes:''},
+  {id:'RADAR-02',location:'رأس البر',status:'online',type:'X-Band Coastal Radar',maker:'Kelvin Hughes',range:72,lastMaint:'',readiness:95,hours:0,faultsMonth:0,notes:''},
+  {id:'RADAR-03',location:'خليج البحر الأحمر',status:'online',type:'S-Band Surface Radar',maker:'Rutter',range:96,lastMaint:'',readiness:97,hours:0,faultsMonth:0,notes:''},
+  {id:'RADAR-04',location:'جزيرة الصياد',status:'online',type:'X-Band Coastal Radar',maker:'Furuno',range:64,lastMaint:'',readiness:95,hours:0,faultsMonth:0,notes:''},
+  {id:'RADAR-05',location:'المنطقة الجنوبية',status:'online',type:'Dual-Band Radar',maker:'Terma',range:120,lastMaint:'',readiness:99,hours:0,faultsMonth:0,notes:''},
+  {id:'RADAR-06',location:'البوابة الساحلية',status:'online',type:'S-Band Surface Radar',maker:'Raytheon',range:96,lastMaint:'',readiness:97,hours:0,faultsMonth:0,notes:''},
+];
+
+let members = [
+  {id:'MBR-001',name:'المدير الزبير',username:'alzubir',email:'alzubir@coastal-radar.gov',role:'admin',phone:'',radars:['RADAR-01','RADAR-02','RADAR-03','RADAR-04','RADAR-05','RADAR-06'],faultsClosed:0,lastLogin:'—',status:'active',notes:'مدير النظام الرئيسي'},
+];
+
+let faults = [];
+
+notifications = [];
+
+/* ══════════════════════════════════════
+   LOGIN — SECURE
+══════════════════════════════════════ */
+async function doLogin() {
+  const u = document.getElementById('loginUser').value.trim().toLowerCase();
+  const p = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+  const btn = document.querySelector('.login-btn');
+
+  /* فحص الإدخال */
+  if(!u || !p) {
+    showLoginError('يرجى إدخال اسم المستخدم وكلمة المرور');
+    shakeCard(); return;
+  }
+
+  /* فحص القفل — Lockout */
+  const now = Date.now();
+  if(loginAttempts[u]) {
+    const att = loginAttempts[u];
+    if(att.locked && now - att.lockedAt < LOCKOUT_MS) {
+      const rem = Math.ceil((LOCKOUT_MS - (now - att.lockedAt)) / 60000);
+      showLoginError(`🔒 تم تعليق الحساب مؤقتاً — حاول بعد ${rem} دقيقة`);
+      shakeCard(); return;
     }
-  ];
-
-  let currentTab = 'all';
-  let detailFaultId = null;
-
-  function setTab(btn, tab) {
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentTab = tab;
-    renderFaults();
-  }
-
-  function renderFaults() {
-    const grid = document.getElementById('faultsGrid');
-    const search = document.getElementById('searchInput').value.toLowerCase();
-    const radarFilter = document.getElementById('radarFilter').value;
-
-    let filtered = faults.filter(f => {
-      if (currentTab === 'critical' && f.severity !== 'critical') return false;
-      if (currentTab === 'warning' && f.severity !== 'warning') return false;
-      if (currentTab === 'resolved' && f.status !== 'resolved') return false;
-      if (radarFilter && !f.radar.includes(radarFilter)) return false;
-      if (search && !f.title.toLowerCase().includes(search) && !f.desc.toLowerCase().includes(search) && !f.id.toLowerCase().includes(search)) return false;
-      return true;
-    });
-
-    document.getElementById('faults-count').textContent = `السجلات المعروضة: ${filtered.length} عطل`;
-
-    if (filtered.length === 0) {
-      grid.innerHTML = `<div class="empty-state"><div class="icon">📡</div><p>لا توجد أعطال مسجلة وفق المعايير المحددة</p></div>`;
-      return;
-    }
-
-    grid.innerHTML = filtered.map((f, i) => {
-      const severityMap = { critical: 'حرج', warning: 'تحذير', info: 'معلومات', resolved: 'محلول' };
-      const badgeClass = f.status === 'resolved' ? 'badge-resolved' : `badge-${f.severity}`;
-      const cardClass = f.status === 'resolved' ? 'resolved' : f.severity;
-      const badgeText = f.status === 'resolved' ? 'محلول' : severityMap[f.severity];
-
-      return `
-      <div class="fault-card ${cardClass}" style="animation-delay:${i*0.07}s">
-        <div class="fault-id-col">
-          <div class="fault-id">${f.id}</div>
-          <div class="severity-badge ${badgeClass}">${badgeText}</div>
-        </div>
-        <div class="fault-body">
-          <div class="fault-title">${f.title}</div>
-          <div class="fault-meta">
-            <span>📡 ${f.radar}</span>
-            <span>⚙ ${f.type}</span>
-            <span>👷 ${f.tech}</span>
-            <span>🕐 ${f.date}</span>
-          </div>
-          <div class="fault-desc">${f.desc.substring(0,120)}${f.desc.length>120?'...':''}</div>
-          <div class="fault-tags">${f.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-        </div>
-        <div class="fault-actions">
-          <button class="btn-small" onclick="showDetail('${f.id}')">عرض</button>
-          ${f.status !== 'resolved' ? `<button class="btn-small" onclick="resolveFault('${f.id}')" style="color:var(--accent2);border-color:var(--accent2)">حلّ</button>` : ''}
-          <button class="btn-small" onclick="deleteFault('${f.id}')" style="color:var(--danger)">حذف</button>
-        </div>
-      </div>`;
-    }).join('');
-
-    updateStats();
-  }
-
-  function updateStats() {
-    document.getElementById('stat-critical').textContent = faults.filter(f=>f.severity==='critical'&&f.status==='open').length;
-    document.getElementById('stat-warning').textContent = faults.filter(f=>f.severity==='warning'&&f.status==='open').length;
-    document.getElementById('stat-resolved').textContent = faults.filter(f=>f.status==='resolved').length;
-  }
-
-  function openAddModal() {
-    document.getElementById('addModal').classList.add('open');
-  }
-
-  function closeModal(id) {
-    document.getElementById(id).classList.remove('open');
-  }
-
-  function addFault() {
-    const title = document.getElementById('faultTitle').value.trim();
-    if (!title) { alert('يرجى إدخال عنوان العطل'); return; }
-
-    const radar = document.getElementById('faultRadar').value;
-    const radarCode = radar.split(' ')[0];
-    const newId = 'FLT-' + String(faults.length + 1).padStart(3, '0');
-    const now = new Date();
-    const dateStr = now.toISOString().slice(0,16).replace('T',' ');
-
-    faults.unshift({
-      id: newId,
-      radar: radarCode,
-      radarName: radar,
-      severity: document.getElementById('faultSeverity').value,
-      title: title,
-      type: document.getElementById('faultType').value,
-      tech: document.getElementById('faultTech').value || 'غير محدد',
-      desc: document.getElementById('faultDesc').value || 'لا يوجد وصف',
-      actions: document.getElementById('faultActions').value || 'لم تتخذ إجراءات بعد',
-      date: dateStr,
-      status: 'open',
-      tags: [document.getElementById('faultType').value]
-    });
-
-    closeModal('addModal');
-    document.getElementById('faultTitle').value = '';
-    document.getElementById('faultDesc').value = '';
-    document.getElementById('faultActions').value = '';
-    document.getElementById('faultTech').value = '';
-    renderFaults();
-    showToast('✓ تم تسجيل العطل بنجاح');
-  }
-
-  function resolveFault(id) {
-    const f = faults.find(x=>x.id===id);
-    if (f) { f.status = 'resolved'; renderFaults(); showToast('✓ تم تحديد العطل كمحلول'); }
-  }
-
-  function deleteFault(id) {
-    if (!confirm('هل أنت متأكد من حذف هذا العطل؟')) return;
-    faults = faults.filter(f=>f.id!==id);
-    renderFaults();
-    showToast('تم حذف العطل');
-  }
-
-  function showDetail(id) {
-    const f = faults.find(x=>x.id===id);
-    if (!f) return;
-    detailFaultId = id;
-    document.getElementById('detailModalTitle').textContent = `⚠ ${f.id} – ${f.title}`;
-    document.getElementById('resolveBtn').style.display = f.status==='resolved' ? 'none' : 'flex';
-    document.getElementById('detailModalBody').innerHTML = `
-      <div class="fault-detail-block">
-        <div class="detail-kv"><div class="detail-key">الرادار:</div><div class="detail-val">${f.radarName}</div></div>
-        <div class="detail-kv"><div class="detail-key">نوع العطل:</div><div class="detail-val">${f.type}</div></div>
-        <div class="detail-kv"><div class="detail-key">المسؤول:</div><div class="detail-val">${f.tech}</div></div>
-        <div class="detail-kv"><div class="detail-key">التاريخ:</div><div class="detail-val">${f.date}</div></div>
-        <div class="detail-kv"><div class="detail-key">الحالة:</div><div class="detail-val">${f.status==='resolved'?'✅ محلول':'🔴 مفتوح'}</div></div>
-      </div>
-      <div class="section-title">وصف العطل</div>
-      <div class="fault-detail-block">${f.desc}</div>
-      <div class="section-title">الإجراءات المتخذة</div>
-      <div class="fault-detail-block">${f.actions}</div>
-      <div class="section-title">سجل الأحداث</div>
-      <div class="fault-detail-block">
-        <div class="timeline-item">
-          <div class="timeline-time">${f.date}</div>
-          <div class="timeline-event">🔴 تم رصد العطل وتسجيله في النظام</div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-time">${f.date.split(' ')[0]} ${(parseInt(f.date.split(' ')[1])+1).toString().padStart(2,'0')}:00</div>
-          <div class="timeline-event">👷 بدء فريق الصيانة في التحقيق</div>
-        </div>
-        ${f.status==='resolved'?`<div class="timeline-item"><div class="timeline-time">محلول</div><div class="timeline-event">✅ تم حل العطل وإعادة الجهاز للعمل</div></div>`:''}
-      </div>
-    `;
-    document.getElementById('detailModal').classList.add('open');
-  }
-
-  function resolveFromDetail() {
-    if (detailFaultId) {
-      resolveFault(detailFaultId);
-      closeModal('detailModal');
+    if(att.locked && now - att.lockedAt >= LOCKOUT_MS) {
+      loginAttempts[u] = {count:0, locked:false};
     }
   }
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
+  /* تعطيل الزر أثناء المعالجة */
+  btn.disabled = true;
+  btn.textContent = 'جارٍ التحقق...';
+  btn.style.opacity = '0.7';
+
+  /* تأخير اصطناعي لمنع Timing Attacks */
+  await new Promise(r => setTimeout(r, 600 + Math.random()*400));
+
+  /* البحث عن المستخدم */
+  const userRecord = USERS.find(x => x.username === u);
+
+  let authenticated = false;
+  if(userRecord) {
+    /* مقارنة الـ hash — في بيئة إنتاجية حقيقية سيكون bcrypt على الخادم */
+    /* هنا نستخدم مقارنة مباشرة مؤمّنة للبيئة المحلية */
+    authenticated = await checkCredentials(u, p, userRecord);
   }
 
-  // Clock
-  function updateClock() {
-    const now = new Date();
-    document.getElementById('clock').textContent = now.toTimeString().slice(0,8);
-    document.getElementById('dateDisplay').textContent = now.toLocaleDateString('ar-SA', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  }
-  setInterval(updateClock, 1000);
-  updateClock();
+  /* إعادة تفعيل الزر */
+  btn.disabled = false;
+  btn.textContent = 'دخول إلى النظام';
+  btn.style.opacity = '1';
 
-  // Close modal on overlay click
-  document.querySelectorAll('.modal-overlay').forEach(o => {
-    o.addEventListener('click', function(e) {
-      if (e.target === this) this.classList.remove('open');
-    });
+  if(!authenticated) {
+    /* تسجيل المحاولة الفاشلة */
+    if(!loginAttempts[u]) loginAttempts[u] = {count:0, locked:false};
+    loginAttempts[u].count++;
+    const remaining = MAX_ATTEMPTS - loginAttempts[u].count;
+    if(loginAttempts[u].count >= MAX_ATTEMPTS) {
+      loginAttempts[u].locked = true;
+      loginAttempts[u].lockedAt = Date.now();
+      showLoginError(`🔒 تم تعليق الحساب لمدة 15 دقيقة بسبب المحاولات المتكررة`);
+    } else {
+      showLoginError(`⚠ بيانات الدخول غير صحيحة — ${remaining} محاولة متبقية`);
+    }
+    shakeCard(); return;
+  }
+
+  /* نجح الدخول — إعادة ضبط المحاولات */
+  if(loginAttempts[u]) loginAttempts[u] = {count:0, locked:false};
+  err.classList.remove('show');
+  currentUser = userRecord;
+  members.find(m => m.username===u && (m.lastLogin=nowStr()));
+  logAct('🔐','تسجيل دخول ناجح إلى النظام');
+  startApp();
+}
+
+async function checkCredentials(u, p, userRecord) {
+  /* مقارنة مؤمنة — Constant-time compare لمنع Timing Attacks */
+  const inputHash = await sha256(p);
+  const storedHash = userRecord.passwordHash;
+  /* Constant-time string comparison */
+  if(inputHash.length !== storedHash.length) return false;
+  let diff = 0;
+  for(let i=0; i<inputHash.length; i++) diff |= inputHash.charCodeAt(i) ^ storedHash.charCodeAt(i);
+  return diff === 0;
+}
+
+function showLoginError(msg) {
+  const err = document.getElementById('loginError');
+  err.textContent = msg;
+  err.classList.add('show');
+}
+
+function shakeCard() {
+  const card = document.querySelector('.login-card');
+  card.style.animation = 'shake 0.4s ease';
+  setTimeout(() => card.style.animation = '', 400);
+}
+
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function startApp() {
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('appShell').classList.add('visible');
+  // Set user info in topbar
+  document.getElementById('topName').textContent = currentUser.name;
+  const roleNames = {admin:'مدير النظام',tech:'تقني صيانة',viewer:'مراقب'};
+  document.getElementById('topRole').textContent = roleNames[currentUser.role];
+  const avClass = {admin:'av-a',tech:'av-t',viewer:'av-v'};
+  const av = document.getElementById('topAvatar');
+  av.textContent = currentUser.avatar||currentUser.name[0];
+  av.className = 'tu-avatar ' + avClass[currentUser.role];
+  // Show/hide admin nav
+  const isAdmin = currentUser.role === 'admin';
+  ['adminNavS','nav-members','nav-settings','nav-actlog'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display=isAdmin?'':'none';
   });
+  // Dashboard actions
+  if(isAdmin) {
+    document.getElementById('dashActions').innerHTML=`<button class="btn btn-accent" onclick="openFaultModal()">+ تسجيل عطل</button>`;
+    document.getElementById('radarActions').innerHTML=`<button class="btn btn-accent" onclick="openRadarModal()">+ إضافة رادار</button><button class="btn btn-ghost btn-sm" onclick="refreshRadarStatus()">↻ تحديث</button>`;
+  } else if(currentUser.role==='tech') {
+    document.getElementById('dashActions').innerHTML=`<button class="btn btn-accent" onclick="openFaultModal()">+ تسجيل عطل</button>`;
+  }
+  // Notifications
+  renderNotifications();
+  renderAll();
+}
 
-  renderFaults();
+function logout() {
+  logAct('🚪','تسجيل خروج من النظام');
+  currentUser = null;
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('appShell').classList.remove('visible');
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+  document.getElementById('userDropdown').classList.remove('open');
+}
+
+/* ══════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════ */
+function goto(page, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const pg = document.getElementById('page-'+page);
+  if(pg) pg.classList.add('active');
+  const nav = document.getElementById('nav-'+page);
+  if(nav) nav.classList.add('active');
+  // Render
+  if(page==='dashboard') renderDashboard();
+  if(page==='radars') renderRadarPage();
+  if(page==='readiness') renderReadiness();
+  if(page==='faults') renderFaults();
+  if(page==='members') renderMembers();
+  if(page==='actlog') renderActLog();
+  closeDrop();
+}
+
+/* ══════════════════════════════════════
+   RENDER ALL
+══════════════════════════════════════ */
+function renderAll() { renderDashboard(); renderFaults(); renderRadarPage(); renderReadiness(); updateTopStats(); renderNotifications(); }
+
+function updateTopStats() {
+  const crit = faults.filter(f=>f.severity==='critical'&&f.status==='open').length;
+  const warn = faults.filter(f=>f.severity==='warning'&&f.status==='open').length;
+  const res = faults.filter(f=>f.status==='resolved').length;
+  document.getElementById('tsC').textContent=crit;
+  document.getElementById('tsW').textContent=warn;
+  document.getElementById('tsOK').textContent=res;
+  document.getElementById('tsR').textContent=radars.length;
+  const b = document.getElementById('navFaultBadge');
+  const open=faults.filter(f=>f.status==='open').length;
+  b.textContent=open;
+  b.className='ni-badge '+(crit>0?'red':'yellow');
+  if(open===0) b.className='ni-badge green';
+}
+
+/* ══════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════ */
+function renderDashboard() {
+  updateTopStats();
+  const crit=faults.filter(f=>f.severity==='critical'&&f.status==='open').length;
+  const warn=faults.filter(f=>f.severity==='warning'&&f.status==='open').length;
+  const res=faults.filter(f=>f.status==='resolved').length;
+  const online=radars.filter(r=>r.status==='online').length;
+  const avgReady=Math.round(radars.reduce((a,r)=>a+r.readiness,0)/radars.length);
+  
+  document.getElementById('dashStats').innerHTML=`
+    <div class="stat-card sc-red"><div class="sc-icon">🔴</div><div class="sc-val">${crit}</div><div class="sc-label">أعطال حرجة</div><div class="sc-change">مفتوحة الآن</div></div>
+    <div class="stat-card sc-yellow"><div class="sc-icon">🟡</div><div class="sc-val">${warn}</div><div class="sc-label">أعطال تحذيرية</div><div class="sc-change">مفتوحة الآن</div></div>
+    <div class="stat-card sc-green"><div class="sc-icon">✅</div><div class="sc-val">${res}</div><div class="sc-label">أعطال محلولة</div><div class="sc-change">إجمالي</div></div>
+    <div class="stat-card sc-blue"><div class="sc-icon">📡</div><div class="sc-val">${online}/${radars.length}</div><div class="sc-label">رادارات تعمل</div><div class="sc-change">جاهزية: ${avgReady}%</div></div>
+  `;
+  
+  // Last faults
+  document.getElementById('dashFaultsTable').innerHTML = faults.slice(0,5).map((f,i)=>`
+    <tr style="animation-delay:${i*.05}s">
+      <td class="td-mono">${f.id}</td>
+      <td><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent)">${f.radar}</span></td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:#fff;font-size:13px">${f.title}</td>
+      <td>${sevBadge(f.severity)}</td>
+      <td>${statBadge(f.status)}</td>
+    </tr>`).join('');
+  
+  // Radars table
+  document.getElementById('dashRadarsTable').innerHTML = radars.map((r,i)=>`
+    <tr style="animation-delay:${i*.05}s">
+      <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent)">${r.id}</span></td>
+      <td style="font-size:12px;color:var(--td)">${r.location}</td>
+      <td>${radarStatBadge(r.status)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="prog-bar" style="flex:1;min-width:60px"><div class="prog-fill" style="width:${r.readiness}%;background:${r.readiness>=90?'var(--a2)':r.readiness>=70?'var(--warn)':'var(--danger)'}"></div></div>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--td)">${r.readiness}%</span>
+        </div>
+      </td>
+    </tr>`).join('');
+  
+  // Fault type chart
+  const types = {};
+  faults.forEach(f=>{types[f.type]=(types[f.type]||0)+1;});
+  const max = Math.max(...Object.values(types),1);
+  const colors=['var(--danger)','var(--warn)','var(--accent)','var(--a2)','var(--purple)','#888'];
+  document.getElementById('faultTypeChart').innerHTML=Object.entries(types).map(([t,v],i)=>`
+    <div class="mch-row">
+      <div class="mch-label">${t}</div>
+      <div class="mch-bar-wrap"><div class="mch-bar" style="width:${(v/max*100)}%;background:${colors[i%colors.length]}"></div></div>
+      <div class="mch-val">${v}</div>
+    </div>`).join('');
+  
+  // Activity
+  renderDashActivity();
+}
+
+function renderDashActivity() {
+  const el = document.getElementById('dashActivity');
+  if(!actLog.length) { el.innerHTML=`<div class="empty"><div class="ei">📋</div><p>لا يوجد نشاط بعد</p></div>`; return; }
+  el.innerHTML=[...actLog].reverse().slice(0,6).map((a,i)=>`
+    <div class="activity-item" style="animation-delay:${i*.04}s">
+      <div class="ai-icon">${a.icon}</div>
+      <div><div class="ai-text"><span class="ai-user">${a.user}</span> ${a.text}</div><div class="ai-time">${a.time}</div></div>
+    </div>`).join('');
+}
+
+/* ══════════════════════════════════════
+   RADAR PAGE
+══════════════════════════════════════ */
+function renderRadarPage() {
+  const search=document.getElementById('radarSearch')?.value.toLowerCase()||'';
+  const statF=document.getElementById('radarStatFilter')?.value||'';
+  let list=radars.filter(r=>{
+    if(statF&&r.status!==statF)return false;
+    if(search&&!r.id.toLowerCase().includes(search)&&!r.location.toLowerCase().includes(search))return false;
+    return true;
+  });
+  
+  const counts={online:radars.filter(r=>r.status==='online').length,fault:radars.filter(r=>r.status==='fault').length,maintenance:radars.filter(r=>r.status==='maintenance').length,offline:radars.filter(r=>r.status==='offline').length};
+  document.getElementById('radarSummaryCards').innerHTML=`
+    <div class="stat-card sc-green"><div class="sc-icon">✅</div><div class="sc-val">${counts.online}</div><div class="sc-label">رادارات تعمل</div></div>
+    <div class="stat-card sc-red"><div class="sc-icon">🔴</div><div class="sc-val">${counts.fault}</div><div class="sc-label">رادارات معطلة</div></div>
+    <div class="stat-card sc-yellow"><div class="sc-icon">🔧</div><div class="sc-val">${counts.maintenance}</div><div class="sc-label">تحت الصيانة</div></div>
+    <div class="stat-card sc-blue"><div class="sc-icon">📡</div><div class="sc-val">${radars.length}</div><div class="sc-label">إجمالي الرادارات</div></div>
+  `;
+  
+  const isAdmin=currentUser?.role==='admin';
+  const grid=document.getElementById('radarGrid');
+  if(!list.length){grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">📡</div><p>لا توجد رادارات</p></div>`;return;}
+  grid.innerHTML=list.map((r,i)=>{
+    const openF=faults.filter(f=>f.radar===r.id&&f.status==='open').length;
+    const rColor=r.readiness>=90?'var(--a2)':r.readiness>=70?'var(--warn)':'var(--danger)';
+    return `
+    <div class="rc ${r.status}" style="animation-delay:${i*.06}s">
+      <div class="rc-bar"></div>
+      <div class="rc-body">
+        <div class="rc-head">
+          <div class="rc-id">${r.id}</div>
+          <div class="status-pulse"><div class="sp-dot ${r.status}"></div></div>
+        </div>
+        <div class="rc-name">📍 ${r.location}</div>
+        <div class="rc-stats">
+          <div class="rcs"><div class="rcs-v">${r.range}</div><div class="rcs-l">نطاق (كم)</div></div>
+          <div class="rcs"><div class="rcs-v" style="color:${openF>0?'var(--danger)':'var(--a2)'}">${openF}</div><div class="rcs-l">أعطال مفتوحة</div></div>
+          <div class="rcs"><div class="rcs-v" style="color:${rColor}">${r.readiness}%</div><div class="rcs-l">الجاهزية</div></div>
+        </div>
+        <div class="rc-progress">
+          <div class="rcp-label"><span>جاهزية التشغيل</span><span>${r.readiness}%</span></div>
+          <div class="rcp-bar"><div class="rcp-fill" style="width:${r.readiness}%;background:${rColor}"></div></div>
+        </div>
+        <div style="font-size:11px;color:var(--td);margin-bottom:10px;font-family:'Share Tech Mono',monospace;display:grid;grid-template-columns:1fr 1fr;gap:4px">
+          <span>النوع: ${r.type}</span><span>المصنع: ${r.maker}</span>
+          <span>الساعات: ${r.hours.toLocaleString()}</span><span>آخر صيانة: ${r.lastMaint||'—'}</span>
+        </div>
+        ${r.notes?`<div style="font-size:12px;color:var(--warn);background:rgba(255,153,0,.06);border:1px solid rgba(255,153,0,.15);border-radius:4px;padding:6px 10px;margin-bottom:10px">⚠ ${r.notes}</div>`:''}
+        <div class="rc-footer">
+          ${radarStatBadge(r.status)}
+          ${isAdmin?`<button class="btn btn-warn btn-sm" onclick="openRadarModal('${r.id}')">تعديل</button>`:''}
+          <button class="btn btn-ghost btn-sm" onclick="openFaultModal(null,'${r.id}')">+ عطل</button>
+          ${isAdmin?`<button class="btn btn-danger btn-sm" onclick="confirmAction('حذف الرادار ${r.id}؟',()=>deleteRadar('${r.id}'))">حذف</button>`:''}
+        </div>
+      </div>
+    </div>`}).join('');
+}
+
+function openRadarModal(id) {
+  if(currentUser?.role!=='admin'){showToast('صلاحية الأدمن مطلوبة','danger');return;}
+  editRadarId=id||null;
+  const r=id?radars.find(x=>x.id===id):null;
+  document.getElementById('radarModalTitle').textContent=r?`📡 تعديل ${r.id}`:'📡 إضافة رادار جديد';
+  document.getElementById('rmCode').value=r?r.id:'';
+  document.getElementById('rmLoc').value=r?r.location:'';
+  document.getElementById('rmStat').value=r?r.status:'online';
+  document.getElementById('rmType').value=r?r.type:'';
+  document.getElementById('rmMaker').value=r?r.maker:'';
+  document.getElementById('rmRange').value=r?r.range:'';
+  document.getElementById('rmMaint').value=r?r.lastMaint:'';
+  document.getElementById('rmReady').value=r?r.readiness:'';
+  document.getElementById('rmHours').value=r?r.hours:'';
+  document.getElementById('rmNotes').value=r?r.notes:'';
+  openMo('radarModal');
+}
+
+function saveRadar() {
+  const code=document.getElementById('rmCode').value.trim().toUpperCase().replace(/\s+/g,'-');
+  if(!code){showToast('أدخل كود الرادار','danger');return;}
+  if(!editRadarId&&radars.find(r=>r.id===code)){showToast('الكود موجود مسبقاً','danger');return;}
+  const data={id:code,location:document.getElementById('rmLoc').value,status:document.getElementById('rmStat').value,type:document.getElementById('rmType').value,maker:document.getElementById('rmMaker').value,range:+document.getElementById('rmRange').value||96,lastMaint:document.getElementById('rmMaint').value,readiness:+document.getElementById('rmReady').value||95,hours:+document.getElementById('rmHours').value||0,notes:document.getElementById('rmNotes').value};
+  if(editRadarId){const i=radars.findIndex(r=>r.id===editRadarId);radars[i]=data;logAct('📡',`تعديل بيانات الرادار ${code}`);showToast('تم تحديث الرادار','ok');}
+  else{radars.push(data);logAct('📡',`إضافة رادار جديد: ${code}`);showToast('تم إضافة الرادار','ok');}
+  addNotif('📡',`تم ${editRadarId?'تعديل':'إضافة'} الرادار ${code}`);
+  closeMo('radarModal'); renderAll();
+}
+
+function deleteRadar(id) {
+  radars=radars.filter(r=>r.id!==id);
+  logAct('🗑',`حذف الرادار ${id}`);
+  showToast('تم حذف الرادار','danger');
+  renderAll();
+}
+
+function changeRadarStatus(id,status) {
+  const r=radars.find(x=>x.id===id);
+  if(r){r.status=status;logAct('📡',`تغيير حالة ${id} إلى ${status}`);renderAll();}
+}
+
+function refreshRadarStatus() {
+  showToast('⟳ جاري تحديث الحالة...','warn');
+  setTimeout(()=>{ renderRadarPage(); showToast('✓ تم التحديث','ok'); }, 1200);
+}
+
+/* ══════════════════════════════════════
+   READINESS PAGE
+══════════════════════════════════════ */
+function renderReadiness() {
+  const avgReady = Math.round(radars.reduce((a,r)=>a+r.readiness,0)/radars.length);
+  const online = radars.filter(r=>r.status==='online').length;
+  const totalHours = radars.reduce((a,r)=>a+r.hours,0);
+  
+  document.getElementById('readinessTopCards').innerHTML=`
+    <div class="stat-card sc-${avgReady>=90?'green':avgReady>=70?'yellow':'red'}">
+      <div class="sc-icon">🎯</div>
+      <div class="sc-val">${avgReady}%</div>
+      <div class="sc-label">متوسط الجاهزية الإجمالية</div>
+      <div class="sc-change">${avgReady>=90?'ممتاز':avgReady>=70?'جيد':'يحتاج تحسين'}</div>
+    </div>
+    <div class="stat-card sc-blue">
+      <div class="sc-icon">📡</div>
+      <div class="sc-val">${online}/${radars.length}</div>
+      <div class="sc-label">رادارات تعمل الآن</div>
+      <div class="sc-change">${Math.round(online/radars.length*100)}% من الطاقة</div>
+    </div>
+    <div class="stat-card sc-green">
+      <div class="sc-icon">⏱</div>
+      <div class="sc-val">${Math.round(totalHours/1000)}K</div>
+      <div class="sc-label">إجمالي ساعات التشغيل</div>
+      <div class="sc-change">لجميع الرادارات</div>
+    </div>
+  `;
+  
+  // Readiness rings
+  document.getElementById('readinessGrid').innerHTML=radars.map((r,i)=>{
+    const pct=r.readiness;
+    const c=circumference(40);
+    const off=c-(pct/100*c);
+    const color=pct>=90?'#00ff9d':pct>=70?'#ff9900':'#ff3333';
+    return `
+    <div class="ready-card" style="animation-delay:${i*.07}s">
+      <div class="ready-ring">
+        <svg viewBox="0 0 90 90" width="90" height="90">
+          <circle class="bg-circle" cx="45" cy="45" r="40" stroke="var(--s3)" stroke-width="6" fill="none"/>
+          <circle class="fg-circle" cx="45" cy="45" r="40" stroke="${color}" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 45 45)"/>
+        </svg>
+        <div class="ready-pct" style="color:${color}">${pct}%</div>
+      </div>
+      <div class="ready-name">${r.id}</div>
+      <div class="ready-loc">📍 ${r.location}</div>
+      <div style="margin-top:8px">${radarStatBadge(r.status)}</div>
+    </div>`;
+  }).join('');
+  
+  // Monthly chart (simulated data)
+  const months=['أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر','يناير','فبراير'];
+  const vals=[88,91,85,93,89,94,avgReady];
+  document.getElementById('readinessMonthChart').innerHTML=months.map((m,i)=>{
+    const v=vals[i];const color=v>=90?'var(--a2)':v>=70?'var(--warn)':'var(--danger)';
+    return `<div class="mch-row"><div class="mch-label">${m}</div><div class="mch-bar-wrap"><div class="mch-bar" style="width:${v}%;background:${color}"></div></div><div class="mch-val">${v}%</div></div>`;
+  }).join('');
+  
+  // Uptime
+  document.getElementById('uptimeDisplay').textContent='12,847 ساعة';
+  document.getElementById('uptimeStats').innerHTML=`
+    <div style="background:var(--s2);border-radius:5px;padding:10px;text-align:center"><div style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--a2);font-weight:bold">99.2%</div><div style="font-size:11px;color:var(--td)">جاهزية RADAR-05</div></div>
+    <div style="background:var(--s2);border-radius:5px;padding:10px;text-align:center"><div style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--danger);font-weight:bold">61%</div><div style="font-size:11px;color:var(--td)">جاهزية RADAR-02</div></div>
+  `;
+  
+  // Readiness table
+  document.getElementById('readinessTable').innerHTML=radars.map((r,i)=>{
+    const pct=r.readiness;const color=pct>=90?'var(--a2)':pct>=70?'var(--warn)':'var(--danger)';
+    return `
+    <tr style="animation-delay:${i*.05}s">
+      <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent)">${r.id}</span></td>
+      <td style="font-size:12px;color:var(--td)">${r.location}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:${pct}%;background:${color}"></div></div>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:${color};font-weight:bold">${pct}%</span>
+        </div>
+      </td>
+      <td class="td-mono">${r.hours.toLocaleString()}</td>
+      <td class="td-mono" style="color:${r.faultsMonth>2?'var(--danger)':r.faultsMonth>0?'var(--warn)':'var(--a2)'}">${r.faultsMonth}</td>
+      <td class="td-mono">${r.lastMaint||'—'}</td>
+      <td>${radarStatBadge(r.status)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function circumference(r){return 2*Math.PI*r;}
+
+/* ══════════════════════════════════════
+   FAULTS
+══════════════════════════════════════ */
+function renderFaults() {
+  populateSelects();
+  const search=(document.getElementById('faultSearch')?.value||'').toLowerCase();
+  const sev=document.getElementById('fSev')?.value||'';
+  const stat=document.getElementById('fStat')?.value||'';
+  const rad=document.getElementById('fRad')?.value||'';
+  
+  let list=faults.filter(f=>{
+    if(sev&&f.severity!==sev)return false;
+    if(stat&&f.status!==stat)return false;
+    if(rad&&f.radar!==rad)return false;
+    if(search&&!f.title.toLowerCase().includes(search)&&!f.id.toLowerCase().includes(search)&&!f.radar.toLowerCase().includes(search))return false;
+    return true;
+  });
+  
+  const crit=faults.filter(f=>f.severity==='critical'&&f.status==='open').length;
+  const warn=faults.filter(f=>f.severity==='warning'&&f.status==='open').length;
+  const open=faults.filter(f=>f.status==='open').length;
+  const res=faults.filter(f=>f.status==='resolved').length;
+  document.getElementById('faultStatsCards').innerHTML=`
+    <div class="stat-card sc-red"><div class="sc-icon">🔴</div><div class="sc-val">${crit}</div><div class="sc-label">حرجة مفتوحة</div></div>
+    <div class="stat-card sc-yellow"><div class="sc-icon">🟡</div><div class="sc-val">${warn}</div><div class="sc-label">تحذيرات مفتوحة</div></div>
+    <div class="stat-card sc-blue"><div class="sc-icon">📂</div><div class="sc-val">${open}</div><div class="sc-label">إجمالي مفتوحة</div></div>
+    <div class="stat-card sc-green"><div class="sc-icon">✅</div><div class="sc-val">${res}</div><div class="sc-label">محلولة</div></div>
+  `;
+  
+  const canEdit=currentUser?.role!=='viewer';
+  const isAdmin=currentUser?.role==='admin';
+  const tbody=document.getElementById('faultsBody');
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="9"><div class="empty"><div class="ei">⚠</div><p>لا توجد أعطال</p></div></td></tr>`;return;}
+  tbody.innerHTML=list.map((f,i)=>`
+    <tr style="animation-delay:${i*.04}s">
+      <td class="td-mono">${f.id}</td>
+      <td><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent)">${f.radar}</span></td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;color:#fff">${f.title}</td>
+      <td style="font-size:12px;color:var(--td)">${f.type}</td>
+      <td>${sevBadge(f.severity)}</td>
+      <td style="font-size:12px">${f.tech}</td>
+      <td>${statBadge(f.status)}</td>
+      <td class="td-mono">${f.date}</td>
+      <td>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-xs" onclick="showFaultDetail('${f.id}')">عرض</button>
+          ${canEdit?`<button class="btn btn-warn btn-xs" onclick="openFaultModal('${f.id}')">تعديل</button>`:''}
+          ${canEdit&&f.status==='open'?`<button class="btn btn-ok btn-xs" onclick="resolveFault('${f.id}')">حلّ</button>`:''}
+          ${isAdmin?`<button class="btn btn-danger btn-xs" onclick="confirmAction('حذف العطل ${f.id}؟',()=>deleteFault('${f.id}'))">حذف</button>`:''}
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openFaultModal(id, preRadar) {
+  const canEdit=currentUser?.role!=='viewer';
+  if(!canEdit){showToast('ليس لديك صلاحية التسجيل','danger');return;}
+  editFaultId=id||null;
+  const f=id?faults.find(x=>x.id===id):null;
+  document.getElementById('faultModalTitle').textContent=f?`✏ تعديل العطل ${f.id}`:'⚠ تسجيل عطل جديد';
+  populateSelects();
+  document.getElementById('fmRad').value=f?f.radar:(preRadar||radars[0]?.id||'');
+  document.getElementById('fmSev').value=f?f.severity:'critical';
+  document.getElementById('fmTitle').value=f?f.title:'';
+  document.getElementById('fmType').value=f?f.type:'عطل كهربائي';
+  document.getElementById('fmTech').value=f?f.tech:(currentUser?.name||'');
+  document.getElementById('fmDesc').value=f?f.desc:'';
+  document.getElementById('fmAct').value=f?f.actions:'';
+  document.getElementById('fmTags').value=f?(f.tags||[]).join('، '):'';
+  document.getElementById('fmStat').value=f?f.status:'open';
+  openMo('faultModal');
+}
+
+function saveFault() {
+  const title=document.getElementById('fmTitle').value.trim();
+  if(!title){showToast('أدخل عنوان العطل','danger');return;}
+  const rad=document.getElementById('fmRad').value;
+  const now=nowStr();
+  if(editFaultId){
+    const f=faults.find(x=>x.id===editFaultId);
+    Object.assign(f,{radar:rad,severity:document.getElementById('fmSev').value,title,type:document.getElementById('fmType').value,tech:document.getElementById('fmTech').value,desc:document.getElementById('fmDesc').value,actions:document.getElementById('fmAct').value,tags:document.getElementById('fmTags').value.split(/[,،]/).map(t=>t.trim()).filter(Boolean),status:document.getElementById('fmStat').value});
+    logAct('📝',`تعديل العطل ${editFaultId}`);
+    showToast('تم تحديث العطل','ok');
+  } else {
+    const nid='FLT-'+String(faults.length+1).padStart(3,'0');
+    faults.unshift({id:nid,radar:rad,severity:document.getElementById('fmSev').value,title,type:document.getElementById('fmType').value,tech:document.getElementById('fmTech').value||'غير محدد',desc:document.getElementById('fmDesc').value,actions:document.getElementById('fmAct').value,date:now,status:document.getElementById('fmStat').value,tags:document.getElementById('fmTags').value.split(/[,،]/).map(t=>t.trim()).filter(Boolean),log:[`${now} – تم تسجيل العطل بواسطة ${currentUser?.name}`]});
+    const r=radars.find(x=>x.id===rad);if(r)r.faultsMonth++;
+    logAct('⚠',`تسجيل عطل جديد: ${nid} – ${title}`);
+    addNotif('⚠',`عطل جديد: ${title}`);
+    showToast('تم تسجيل العطل','ok');
+  }
+  closeMo('faultModal'); renderAll();
+}
+
+function resolveFault(id) {
+  const f=faults.find(x=>x.id===id);
+  if(!f)return;
+  f.status='resolved';
+  f.log.push(`${nowStr()} – تم الإغلاق كمحلول بواسطة ${currentUser?.name}`);
+  const m=members.find(x=>x.name===currentUser?.name||x.username===currentUser?.username);
+  if(m)m.faultsClosed++;
+  logAct('✅',`إغلاق العطل ${id} كمحلول`);
+  addNotif('✅',`تم حل العطل ${id}`);
+  renderAll(); showToast('تم تحديد العطل كمحلول','ok');
+}
+
+function deleteFault(id) {
+  faults=faults.filter(f=>f.id!==id);
+  logAct('🗑',`حذف العطل ${id}`);
+  renderAll(); showToast('تم حذف العطل','danger');
+}
+
+function showFaultDetail(id) {
+  const f=faults.find(x=>x.id===id);if(!f)return;
+  document.getElementById('fdTitle').textContent=`⚠ ${f.id} – ${f.title}`;
+  const canEdit=currentUser?.role!=='viewer';
+  document.getElementById('fdResolve').style.display=f.status==='open'&&canEdit?'inline-flex':'none';
+  document.getElementById('fdEdit').style.display=canEdit?'inline-flex':'none';
+  document.getElementById('fdEdit').onclick=()=>{closeMo('fdModal');openFaultModal(id);};
+  document.getElementById('fdResolve').onclick=()=>{resolveFault(id);closeMo('fdModal');};
+  document.getElementById('fdBody').innerHTML=`
+    <div class="db">
+      <div class="dkv"><div class="dk">الرادار:</div><div class="dv" style="font-family:'Share Tech Mono',monospace;color:var(--accent)">${f.radar}</div></div>
+      <div class="dkv"><div class="dk">نوع العطل:</div><div class="dv">${f.type}</div></div>
+      <div class="dkv"><div class="dk">التقني المسؤول:</div><div class="dv">${f.tech}</div></div>
+      <div class="dkv"><div class="dk">تاريخ التسجيل:</div><div class="dv" style="font-family:'Share Tech Mono',monospace">${f.date}</div></div>
+      <div class="dkv"><div class="dk">الخطورة:</div><div class="dv">${sevBadge(f.severity)}</div></div>
+      <div class="dkv"><div class="dk">الحالة:</div><div class="dv">${statBadge(f.status)}</div></div>
+      <div class="dkv"><div class="dk">التصنيفات:</div><div class="dv">${(f.tags||[]).map(t=>`<span style="background:rgba(13,51,82,.7);border:1px solid var(--border);padding:2px 8px;border-radius:12px;font-size:11px;margin-left:4px">${t}</span>`).join('')||'—'}</div></div>
+    </div>
+    <div class="sec-label">وصف العطل</div>
+    <div class="db" style="line-height:1.8;color:var(--text)">${f.desc||'—'}</div>
+    <div class="sec-label">الإجراءات المتخذة</div>
+    <div class="db" style="line-height:1.8;color:var(--text)">${f.actions||'—'}</div>
+    <div class="sec-label">سجل الأحداث</div>
+    <div class="db">
+      ${(f.log||[]).map(l=>`<div class="tl-item"><div class="tl-t">${l.split('–')[0]||''}</div><div class="tl-e">${l.split('–').slice(1).join('–').trim()}</div></div>`).join('')||'<div class="tl-e" style="color:var(--td)">لا يوجد سجل</div>'}
+    </div>
+  `;
+  openMo('fdModal');
+}
+
+function exportFaults() {
+  const hdr='الرقم,الرادار,العنوان,النوع,الخطورة,المسؤول,الحالة,التاريخ';
+  const rows=faults.map(f=>`${f.id},${f.radar},"${f.title}",${f.type},${f.severity},${f.tech},${f.status},${f.date}`);
+  const csv='\uFEFF'+hdr+'\n'+rows.join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='faults.csv';a.click();
+  logAct('⬇','تصدير قائمة الأعطال CSV');
+  showToast('تم تصدير الملف','ok');
+}
+
+/* ══════════════════════════════════════
+   MEMBERS
+══════════════════════════════════════ */
+function renderMembers() {
+  const search=(document.getElementById('memberSearch')?.value||'').toLowerCase();
+  const roleF=document.getElementById('memberRoleF')?.value||'';
+  let list=members.filter(m=>{
+    if(roleF&&m.role!==roleF)return false;
+    if(search&&!m.name.toLowerCase().includes(search)&&!m.email.toLowerCase().includes(search))return false;
+    return true;
+  });
+  const roleMap={admin:'مدير',tech:'تقني',viewer:'مراقب'};
+  const avCls={admin:'av-a',tech:'av-t',viewer:'av-v'};
+  const bCls={admin:'b-admin',tech:'b-tech',viewer:'b-viewer'};
+  const isAdmin=currentUser?.role==='admin';
+  const tbody=document.getElementById('membersBody');
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="ei">👥</div><p>لا يوجد أعضاء</p></div></td></tr>`;return;}
+  tbody.innerHTML=list.map((m,i)=>`
+    <tr style="animation-delay:${i*.04}s">
+      <td>
+        <div class="member-cell">
+          <div class="avatar ${avCls[m.role]}">${m.name[0]}${m.name.split(' ')[1]?.[0]||''}</div>
+          <div><div class="mc-name">${m.name}</div><div class="mc-email">${m.email}</div></div>
+        </div>
+      </td>
+      <td><span class="badge ${bCls[m.role]}">${roleMap[m.role]}</span></td>
+      <td style="font-size:11px;color:var(--td)">${m.radars.length?m.radars.join(', '):'—'}</td>
+      <td class="td-mono">${m.faultsClosed}</td>
+      <td class="td-mono" style="font-size:11px">${m.lastLogin}</td>
+      <td><span class="badge ${m.status==='active'?'b-online':'b-offline'}">${m.status==='active'?'نشط':'معطل'}</span></td>
+      <td>
+        ${isAdmin?`
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-warn btn-xs" onclick="openMemberModal('${m.id}')">تعديل</button>
+          <button class="btn ${m.status==='active'?'btn-ghost':'btn-ok'} btn-xs" onclick="toggleMember('${m.id}')">${m.status==='active'?'تعليق':'تفعيل'}</button>
+          <button class="btn btn-danger btn-xs" onclick="confirmAction('حذف ${m.name}؟',()=>deleteMember('${m.id}'))">حذف</button>
+        </div>`:'—'}
+      </td>
+    </tr>`).join('');
+}
+
+function openMemberModal(id) {
+  if(currentUser?.role!=='admin'){showToast('صلاحية الأدمن مطلوبة','danger');return;}
+  editMemberId=id||null;
+  const m=id?members.find(x=>x.id===id):null;
+  document.getElementById('memberModalTitle').textContent=m?`👤 تعديل ${m.name}`:'👤 إضافة عضو جديد';
+  document.getElementById('mmName').value=m?m.name:'';
+  document.getElementById('mmUser').value=m?m.username:'';
+  document.getElementById('mmEmail').value=m?m.email:'';
+  document.getElementById('mmPass').value='';
+  document.getElementById('mmRole').value=m?m.role:'tech';
+  document.getElementById('mmPhone').value=m?m.phone:'';
+  document.getElementById('mmNotes').value=m?m.notes:'';
+  const rs=document.getElementById('mmRadars');
+  rs.innerHTML=radars.map(r=>`<option value="${r.id}" ${m&&m.radars.includes(r.id)?'selected':''}>${r.id} – ${r.location}</option>`).join('');
+  openMo('memberModal');
+}
+
+function saveMember() {
+  const name=document.getElementById('mmName').value.trim();
+  if(!name){showToast('أدخل اسم العضو','danger');return;}
+  const email=document.getElementById('mmEmail').value.trim();
+  const username=document.getElementById('mmUser').value.trim();
+  const selR=Array.from(document.getElementById('mmRadars').selectedOptions).map(o=>o.value);
+  if(editMemberId){
+    const m=members.find(x=>x.id===editMemberId);
+    Object.assign(m,{name,username,email,role:document.getElementById('mmRole').value,phone:document.getElementById('mmPhone').value,radars:selR,notes:document.getElementById('mmNotes').value});
+    logAct('👤',`تعديل بيانات العضو ${name}`);
+    showToast('تم تحديث العضو','ok');
+  } else {
+    const nid='MBR-'+String(members.length+1).padStart(3,'0');
+    members.push({id:nid,name,username,email,role:document.getElementById('mmRole').value,phone:document.getElementById('mmPhone').value,radars:selR,faultsClosed:0,lastLogin:'—',status:'active',notes:document.getElementById('mmNotes').value});
+    if(username&&document.getElementById('mmPass').value){
+      sha256(document.getElementById('mmPass').value).then(h=>{
+        USERS.push({username,passwordHash:h,role:document.getElementById('mmRole').value,name,email,avatar:name[0]});
+      });
+    }
+    logAct('👤',`إضافة عضو جديد: ${name}`);
+    showToast('تم إضافة العضو','ok');
+  }
+  closeMo('memberModal'); renderMembers();
+}
+
+function toggleMember(id) {
+  const m=members.find(x=>x.id===id);
+  if(!m)return;
+  m.status=m.status==='active'?'inactive':'active';
+  logAct('👤',`${m.status==='active'?'تفعيل':'تعليق'} حساب ${m.name}`);
+  renderMembers(); showToast(`تم ${m.status==='active'?'تفعيل':'تعليق'} العضو`);
+}
+
+function deleteMember(id) {
+  const m=members.find(x=>x.id===id);
+  members=members.filter(x=>x.id!==id);
+  if(m)logAct('🗑',`حذف العضو ${m.name}`);
+  renderMembers(); showToast('تم حذف العضو','danger');
+}
+
+/* ══════════════════════════════════════
+   ACTIVITY LOG
+══════════════════════════════════════ */
+function renderActLog() {
+  const tbody=document.getElementById('actLogBody');
+  if(!actLog.length){tbody.innerHTML=`<tr><td colspan="4"><div class="empty"><div class="ei">📋</div><p>لا يوجد نشاط</p></div></td></tr>`;return;}
+  const roleNames={admin:'مدير النظام',tech:'تقني صيانة',viewer:'مراقب'};
+  tbody.innerHTML=[...actLog].reverse().map((a,i)=>`
+    <tr style="animation-delay:${i*.02}s">
+      <td class="td-mono">${a.time}</td>
+      <td>${a.icon} ${a.text}</td>
+      <td style="color:var(--accent);font-weight:700">${a.user}</td>
+      <td><span class="badge b-${a.role}">${roleNames[a.role]||a.role}</span></td>
+    </tr>`).join('');
+}
+
+function logAct(icon, text) {
+  actLog.push({icon,text,user:currentUser?.name||'النظام',role:currentUser?.role||'admin',time:nowStr()});
+  renderDashActivity();
+}
+
+/* ══════════════════════════════════════
+   NOTIFICATIONS
+══════════════════════════════════════ */
+function renderNotifications() {
+  const unread=notifications.filter(n=>!n.read).length;
+  document.getElementById('notifCount').textContent=unread;
+  document.getElementById('notifCount').style.display=unread?'flex':'none';
+  document.getElementById('notifList').innerHTML=notifications.slice(0,6).map(n=>`
+    <div class="np-item ${n.read?'':'np-unread'}" onclick="markRead()">
+      <div class="np-icon">${n.icon}</div>
+      <div><div class="np-text">${n.text}</div><div class="np-time">${n.time}</div></div>
+    </div>`).join('')||`<div class="np-item"><div class="np-text" style="color:var(--td);text-align:center;padding:10px">لا توجد تنبيهات</div></div>`;
+}
+
+function addNotif(icon, text) {
+  notifications.unshift({icon,text,time:nowStr().split(' ')[1],read:false});
+  renderNotifications();
+}
+
+function clearNotif() {
+  notifications=[]; renderNotifications(); closeDrop(); showToast('تم مسح التنبيهات','ok');
+}
+
+function markRead() {
+  notifications.forEach(n=>n.read=true); renderNotifications();
+}
+
+function toggleNotif() {
+  const p=document.getElementById('notifPanel');
+  const dd=document.getElementById('userDropdown');
+  dd.classList.remove('open');
+  p.classList.toggle('open');
+}
+
+/* ══════════════════════════════════════
+   PROFILE MODAL
+══════════════════════════════════════ */
+function openProfileModal() {
+  const u=currentUser;if(!u)return;
+  const avCls={admin:'av-a',tech:'av-t',viewer:'av-v'};
+  const roleNames={admin:'مدير النظام',tech:'تقني صيانة',viewer:'مراقب'};
+  document.getElementById('profileBody').innerHTML=`
+    <div style="text-align:center;margin-bottom:20px">
+      <div class="avatar ${avCls[u.role]}" style="width:70px;height:70px;font-size:26px;margin:0 auto 12px;border-width:3px">${u.avatar||u.name[0]}</div>
+      <div style="font-size:18px;font-weight:900;color:#fff">${u.name}</div>
+      <div style="font-size:12px;color:var(--td);margin-top:3px">${u.email}</div>
+    </div>
+    <div class="db">
+      <div class="dkv"><div class="dk">اسم المستخدم:</div><div class="dv" style="font-family:'Share Tech Mono',monospace">${u.username}</div></div>
+      <div class="dkv"><div class="dk">الدور:</div><div class="dv">${roleNames[u.role]}</div></div>
+      <div class="dkv"><div class="dk">الهاتف:</div><div class="dv">${u.phone||'—'}</div></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">الاسم الكامل</label><input class="fi" id="profName" value="${u.name}"></div>
+      <div class="fg"><label class="fl">رقم الهاتف</label><input class="fi" id="profPhone" value="${u.phone||''}"></div>
+    </div>
+    <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fi" id="profEmail" value="${u.email}" type="email"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">كلمة المرور الجديدة</label><input class="fi" id="profPass" type="password" placeholder="اتركه فارغاً للإبقاء"></div>
+      <div class="fg"><label class="fl">تأكيد كلمة المرور</label><input class="fi" id="profPass2" type="password" placeholder="••••••••"></div>
+    </div>
+  `;
+  openMo('profileModal'); closeDrop();
+}
+
+function saveProfile() {
+  const name=document.getElementById('profName').value.trim();
+  const email=document.getElementById('profEmail').value.trim();
+  const phone=document.getElementById('profPhone').value.trim();
+  const pass=document.getElementById('profPass').value;
+  const pass2=document.getElementById('profPass2').value;
+  if(pass&&pass!==pass2){showToast('كلمتا المرور غير متطابقتين','danger');return;}
+  if(name){
+    currentUser.name=name;
+    document.getElementById('topName').textContent=name;
+    const m=members.find(x=>x.username===currentUser.username);
+    if(m){m.name=name;m.email=email;m.phone=phone;}
+  }
+  if(pass){
+    sha256(pass).then(h=>{
+      const u=USERS.find(x=>x.username===currentUser.username);
+      if(u)u.passwordHash=h;
+    });
+  }
+  logAct('👤','تحديث الملف الشخصي');
+  closeMo('profileModal'); showToast('تم حفظ التغييرات','ok');
+}
+
+/* ══════════════════════════════════════
+   SETTINGS
+══════════════════════════════════════ */
+function saveSettings() {
+  logAct('⚙','حفظ إعدادات النظام');
+  showToast('تم حفظ الإعدادات','ok');
+}
+
+/* ══════════════════════════════════════
+   HELPERS
+══════════════════════════════════════ */
+function populateSelects() {
+  // fmRad
+  const fmRad=document.getElementById('fmRad');
+  if(fmRad){const prev=fmRad.value;fmRad.innerHTML=radars.map(r=>`<option value="${r.id}">${r.id} – ${r.location}</option>`).join('');if(prev)fmRad.value=prev;}
+  // fmTech
+  const fmTech=document.getElementById('fmTech');
+  if(fmTech){const prev=fmTech.value;fmTech.innerHTML=members.filter(m=>m.role!=='viewer').map(m=>`<option>${m.name}</option>`).join('');if(prev)fmTech.value=prev;}
+  // fRad
+  const fRad=document.getElementById('fRad');
+  if(fRad){const prev=fRad.value;fRad.innerHTML='<option value="">كل الرادارات</option>'+radars.map(r=>`<option value="${r.id}">${r.id}</option>`).join('');if(prev)fRad.value=prev;}
+}
+
+function sevBadge(s){const m={critical:'b-crit حرج',warning:'b-warn تحذير',info:'b-info معلومات'};const p=(m[s]||'b-info '+s).split(' ');return `<span class="badge ${p[0]}">${p.slice(1).join(' ')}</span>`;}
+function statBadge(s){return s==='resolved'?'<span class="badge b-resolved">محلول</span>':'<span class="badge b-open">مفتوح</span>';}
+function radarStatBadge(s){const m={online:'b-online يعمل',fault:'b-fault عطل',maintenance:'b-maint صيانة',offline:'b-offline غير متصل'};const p=(m[s]||'').split(' ');return `<span class="badge ${p[0]}">${p.slice(1).join(' ')||s}</span>`;}
+function nowStr(){return new Date().toISOString().slice(0,16).replace('T',' ');}
+
+function openMo(id){document.getElementById(id).classList.add('open');}
+function closeMo(id){document.getElementById(id).classList.remove('open');}
+
+function confirmAction(msg, cb) {
+  document.getElementById('confirmMsg').textContent=msg;
+  document.getElementById('confirmOK').onclick=()=>{closeMo('confirmModal');if(cb)cb();};
+  openMo('confirmModal');
+}
+
+function showToast(msg, type) {
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+(type||'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', e => {
+  if(!e.target.closest('#userBtn'))document.getElementById('userDropdown').classList.remove('open');
+  if(!e.target.closest('.notif-btn')&&!e.target.closest('#notifPanel'))document.getElementById('notifPanel').classList.remove('open');
+  if(!e.target.closest('.mo')){}
+});
+
+function toggleUserMenu(){ document.getElementById('userDropdown').classList.toggle('open'); document.getElementById('notifPanel').classList.remove('open'); }
+function closeDrop(){ document.getElementById('userDropdown').classList.remove('open'); }
+
+// Close modals on overlay
+document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+// Clock
+function tick(){document.getElementById('clock').textContent=new Date().toTimeString().slice(0,8);}
+setInterval(tick,1000);tick();
 </script>
 
 </body>
